@@ -3,4 +3,5 @@
     <string name="unknown">\?</string>
     <string name="loading">loading</string>
     <string name="currently_create_a_magic">Currently create a magic</string>
+    <string name="No_Connection">Connection not Available</string>
 </resources>

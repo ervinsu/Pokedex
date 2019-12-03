@@ -1,13 +1,16 @@
 package com.ervin.mypokedex.data.local.entity
 
-import androidx.room.*
-import com.ervin.mypokedex.utils.TablePokemonTypeElement
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
 import com.ervin.mypokedex.utils.TableTypeElement
 
 
 @Entity
 //    (indices = [Index("typeId")])
-     (tableName = TableTypeElement.TypeTable)
+     (tableName = TableTypeElement.TypeTable,
+    indices = [Index(TableTypeElement.TypeID)])
 data class TypeElementEntity (
 
     @ColumnInfo(name = TableTypeElement.TypeID)

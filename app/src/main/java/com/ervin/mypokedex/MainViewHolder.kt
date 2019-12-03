@@ -11,48 +11,48 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.ervin.mypokedex.R
-import com.ervin.mypokedex.data.model.SimplePokemonWithTypePojo
+import com.ervin.mypokedex.data.model.SimplePokemonWithTypePojoModel
 
 
-class MainViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+class MainViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     private val name: TextView = view.findViewById(R.id.pokeName)
     private val picture: ImageView = view.findViewById(R.id.pokePicture)
     private val container: View = view.findViewById(R.id.container_main_item)
     private val pokeContainer: View = view.findViewById(R.id.pokeContainer)
 
-    private var simplePokemonItemPojo: SimplePokemonWithTypePojo? = null
+    private var simplePokemonItemPojoModel: SimplePokemonWithTypePojoModel? = null
 
     init {
         view.setOnClickListener {
-            simplePokemonItemPojo?.pokemon?.pokemonId?.let { pokemonID ->
+            simplePokemonItemPojoModel?.pokemonModel?.pokemonId?.let { pokemonID ->
                 //                val intent = Intent(this, )
 //                view.context.startActivity(intent)
             }
         }
     }
 
-    fun bind(simplePokemonItemPojo: SimplePokemonWithTypePojo?) {
-        if (simplePokemonItemPojo == null) {
+    fun bind(simplePokemonItemPojoModel: SimplePokemonWithTypePojoModel?) {
+        if (simplePokemonItemPojoModel == null) {
             val resources = itemView.resources
             name.text = resources.getString(R.string.unknown)
             picture.visibility = View.GONE
         } else {
-            showRepoData(simplePokemonItemPojo)
+            showRepoData(simplePokemonItemPojoModel)
         }
     }
 
     @SuppressLint("ResourceType")
-    private fun showRepoData(simplePokemonItemPojo: SimplePokemonWithTypePojo) {
-        this.simplePokemonItemPojo = simplePokemonItemPojo
-        name.text = simplePokemonItemPojo.pokemon.pokemonName
+    private fun showRepoData(simplePokemonItemPojoModel: SimplePokemonWithTypePojoModel) {
+        this.simplePokemonItemPojoModel = simplePokemonItemPojoModel
+        name.text = simplePokemonItemPojoModel.pokemonModel.pokemonName
         Glide.with(picture.context)
-            .load(simplePokemonItemPojo.pokemon.pokemonSpritesUrl)
+            .load(simplePokemonItemPojoModel.pokemonModel.pokemonSpritesUrl)
             .into(picture)
         val arrayColorTypes = IntArray(2)
-        for (i in simplePokemonItemPojo.typeList.indices) {
-            arrayColorTypes[i] = Color.parseColor(simplePokemonItemPojo.typeList[i].typeColor)
-            if (simplePokemonItemPojo.typeList.size == 1){
-                arrayColorTypes[1] = Color.parseColor(simplePokemonItemPojo.typeList[0].typeColor)
+        for (i in simplePokemonItemPojoModel.typeList.indices) {
+            arrayColorTypes[i] = Color.parseColor(simplePokemonItemPojoModel.typeList[i].typeColor)
+            if (simplePokemonItemPojoModel.typeList.size == 1){
+                arrayColorTypes[1] = Color.parseColor(simplePokemonItemPojoModel.typeList[0].typeColor)
             }
         }
 

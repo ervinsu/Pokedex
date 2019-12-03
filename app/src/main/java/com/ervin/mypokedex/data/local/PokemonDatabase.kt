@@ -4,12 +4,16 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.ervin.mypokedex.data.local.entity.PokemonEntity
-import com.ervin.mypokedex.data.local.entity.PokemonTypeElementEntity
-import com.ervin.mypokedex.data.local.entity.TypeElementEntity
+import com.ervin.mypokedex.data.local.entity.*
 
 @Database(
-    entities = [PokemonEntity::class, PokemonTypeElementEntity::class, TypeElementEntity::class]
+    entities = [PokemonEntity::class,
+        PokemonTypeElementEntity::class,
+        TypeElementEntity::class,
+        TypeElementSuperEffectiveEntity::class,
+        TypeElementNotEffectiveEntity::class,
+        TypeElementNoDamageEntity::class
+    ]
     , version = 1
     , exportSchema = false
 )

@@ -8,7 +8,8 @@ import androidx.room.PrimaryKey
 import com.ervin.mypokedex.utils.TablePokemon
 
 @Entity
-    (tableName = TablePokemon.PokemonTable)
+    (tableName = TablePokemon.PokemonTable,
+    indices = [Index(TablePokemon.PokemonID)])
 data class PokemonEntity(
     @PrimaryKey
     @ColumnInfo(name = TablePokemon.PokemonID)

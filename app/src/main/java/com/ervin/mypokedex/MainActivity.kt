@@ -11,11 +11,11 @@ import com.ervin.mypokedex.utils.setGone
 import com.ervin.mypokedex.viewmodel.ViewModelFactory
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
-import java.lang.Exception
-import java.text.SimpleDateFormat
-import java.util.*
+import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity() {
@@ -34,6 +34,12 @@ class MainActivity : AppCompatActivity() {
         mainViewModel = obtainViewModel(this@MainActivity)
         try {
             mainViewModel.apply {
+                getPokemonType().observe(this@MainActivity, Observer {
+                    for(i in it.indices){
+                        Log.d("getPokemon","${it[i].typeEntity.typeName} ${it[i].typeSuperEffectiveEntity.size}")
+                    }
+                })
+
                 //get saved pokemon
                 getLocalPokemon().observe(this@MainActivity, Observer { returnedValue ->
                     val sizeData = returnedValue.data?.size
@@ -107,7 +113,7 @@ class MainActivity : AppCompatActivity() {
                                                 Snackbar.LENGTH_LONG
                                             ).show()
                                         else if (!status) {
-                                            tv_magic_layout.text = "Connection not Available"
+                                            tv_magic_layout.text = getString(R.string.No_Connection)
                                             pg_loading.setGone()
                                             val feedback = Snackbar.make(
                                                 window.decorView,
@@ -127,77 +133,6 @@ class MainActivity : AppCompatActivity() {
                         })
                     }
                 })
-
-//                lifecycleScope.launch(Dispatchers.IO) {
-//                    if(isInternetAvailable()){
-//                        withContext(Dispatchers.Main) {
-//                            //get and save type pokemon
-//                            getTypesPokemon()
-//
-//                            //handling result fetching
-//                            getFetchBoolean().observe(this@MainActivity, Observer {
-//                                if (it)
-//                                    Snackbar.make(
-//                                        window.decorView,
-//                                        "Update data Pokemon Success",
-//                                        Snackbar.LENGTH_LONG
-//                                    ).show()
-//                                else if (!it) {
-//                                    val feedback = Snackbar.make(
-//                                        window.decorView,
-//                                        "Failed to update data Pokemon",
-//                                        Snackbar.LENGTH_LONG
-//                                    )
-//                                    feedback.setAction("Try Again") { mainViewModel.getCountPokemon() }
-//                                    feedback.show()
-//                                }
-//                            })
-//
-//                            //fetching pokemon and save to room
-//                            getTryFetchPokemons().observe(
-//                                this@MainActivity,
-//                                Observer { response ->
-//                                    when (response.status) {
-//                                        Status.LOADING -> {
-//                                            Log.d("aaaaa", "Loading")
-//                                        }
-//                                        Status.ERROR -> {
-//                                            Log.d("aaaaa", "error")
-//                                        }
-//                                        Status.SUCCESS -> {
-//                                            try {
-//                                                Log.d("aaaaa", "success")
-//                                                adapter.submitList(response.data)
-//                                                adapter.notifyDataSetChanged()
-//                                                Log.d("aaaaa", "${response.data?.size}")
-//                                            } catch (e: Exception) {
-//                                                Log.d(
-//                                                    "errrorFetchSuccess",
-//                                                    "${e.message}"
-//                                                )
-//                                            }
-//                                        }
-//                                    }
-//                                    lifecycleScope.launch(Dispatchers.Main) {
-//                                        pg_loading.setGone()
-//                                        tv_magic_layout.setGone()
-//                                    }
-//                                })
-//                        }
-//                    }else{
-//                        withContext(Dispatchers.Main) {
-//                            tv_magic_layout.text = "No Internet Connection"
-//                            pg_loading.setGone()
-//                            val feedback = Snackbar.make(
-//                                window.decorView,
-//                                "No Internet Connection",
-//                                Snackbar.LENGTH_LONG
-//                            )
-//                            feedback.setAction("Try Again") { mainViewModel.getLocalPokemon() }
-//                            feedback.show()
-//                        }
-//                    }
-//                }
             }
         }catch (e:Exception){
             Log.d("tes",e.message.toString())
@@ -209,17 +144,17 @@ class MainActivity : AppCompatActivity() {
         job.cancel()
     }
 
-    fun String.toDate(dateFormat:String = "HH:mm:ss",timeZone : TimeZone = TimeZone.getTimeZone("UTC")):Date?{
-        val parser = SimpleDateFormat(dateFormat, Locale.getDefault())
-        parser.timeZone = timeZone
-        return parser.parse(this)
-    }
-
-    fun Date.formatToString(dateFormat: String, timeZone: TimeZone = TimeZone.getDefault()):String{
-        val formatter = SimpleDateFormat(dateFormat, Locale.getDefault())
-        formatter.timeZone = timeZone
-        return formatter.format(this)
-    }
+//    fun String.toDate(dateFormat:String = "HH:mm:ss",timeZone : TimeZone = TimeZone.getTimeZone("UTC")):Date?{
+//        val parser = SimpleDateFormat(dateFormat, Locale.getDefault())
+//        parser.timeZone = timeZone
+//        return parser.parse(this)
+//    }
+//
+//    fun Date.formatToString(dateFormat: String, timeZone: TimeZone = TimeZone.getDefault()):String{
+//        val formatter = SimpleDateFormat(dateFormat, Locale.getDefault())
+//        formatter.timeZone = timeZone
+//        return formatter.format(this)
+//    }
 
     private fun initAdapter() {
         rv_list_main.adapter = adapter

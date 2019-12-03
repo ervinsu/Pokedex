@@ -35,3 +35,29 @@ class TablePokemonTypeElement {
         const val PokemonTypeElementID: String = "pokeTypeClassId"
     }
 }
+
+
+class TableTypeSuperElementEffective{
+    companion object{
+        const val TypeID: String ="typeClassId"
+        const val TypeSuperEffectiveTable: String ="TypeEffectiveTable"
+        const val TypeIDSuperEffective: String ="typeIDEffective"
+    }
+}
+
+
+class TableTypeElementNotEffective{
+    companion object{
+        const val TypeID: String ="typeClassId"
+        const val TypeNotEffectiveTable: String ="TypeNotEffectiveTable"
+        const val TypeIDNotEffective: String ="typeIDNotEffective"
+    }
+}
+
+class TableTypeElementNoDamage{
+    companion object{
+        const val TypeID: String ="typeClassId"
+        const val TypeNoDamageTable: String ="typeNoDamageTable"
+        const val TypeIDNoDamage: String ="typeIDNoDamage"
+    }
+}

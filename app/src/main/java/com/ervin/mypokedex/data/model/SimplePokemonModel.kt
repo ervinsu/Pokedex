@@ -3,7 +3,7 @@ package com.ervin.mypokedex.data.model
 import androidx.room.ColumnInfo
 import com.ervin.mypokedex.utils.TablePokemon
 
-data class SimplePokemon (
+data class SimplePokemonModel (
     @ColumnInfo(name = TablePokemon.PokemonID)
     val pokemonId: Int,
 

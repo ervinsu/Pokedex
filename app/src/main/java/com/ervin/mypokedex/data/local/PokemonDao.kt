@@ -2,10 +2,9 @@ package com.ervin.mypokedex.data.local
 
 import androidx.paging.DataSource
 import androidx.room.*
-import com.ervin.mypokedex.data.local.entity.PokemonEntity
-import com.ervin.mypokedex.data.local.entity.PokemonTypeElementEntity
-import com.ervin.mypokedex.data.model.SimplePokemonWithTypePojo
-import com.ervin.mypokedex.data.local.entity.TypeElementEntity
+import com.ervin.mypokedex.data.local.entity.*
+import com.ervin.mypokedex.data.model.SimplePokemonWithTypePojoModel
+import com.ervin.mypokedex.data.model.TypeElementModel
 
 @Dao
 interface PokemonDao {
@@ -16,16 +15,28 @@ interface PokemonDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllTypeElement(types: List<TypeElementEntity>)
 
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllTypeElementSuperEffective(types: List<TypeElementSuperEffectiveEntity>)
+
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllTypeElementNotEffective(types: List<TypeElementNotEffectiveEntity>)
+
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllTypeElementNoDamage(types: List<TypeElementNoDamageEntity>)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCompositePokemonType(pokemonWithTypes: List<PokemonTypeElementEntity>)
 
     @Transaction
     @Query("SELECT pokemonId, pokemonName, pokemonSpritesUrl from PokemonTable")
-    fun getPokemonWithType() : DataSource.Factory<Int, SimplePokemonWithTypePojo>
+    fun getPokemonWithType() : DataSource.Factory<Int, SimplePokemonWithTypePojoModel>
 
-//    @Transaction
-//    @Query("SELECT * from PokemonTable")
-//    suspend fun getPokemonWithTypeNonPagedList() : List<PokemonWithTypePojo>
+    @Transaction
+    @Query("SELECT * from TypeTable")
+    suspend fun getTypePokemon() : List<TypeElementModel>
 
     @Transaction
     @Query("SELECT COUNT(PokemonId) from PokemonTable")

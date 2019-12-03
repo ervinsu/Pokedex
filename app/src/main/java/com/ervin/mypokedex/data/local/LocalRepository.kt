@@ -1,41 +1,48 @@
 package com.ervin.mypokedex.data.local
 
 import androidx.paging.DataSource
-import com.ervin.mypokedex.data.local.entity.PokemonEntity
-import com.ervin.mypokedex.data.local.entity.PokemonTypeElementEntity
-import com.ervin.mypokedex.data.model.SimplePokemonWithTypePojo
-import com.ervin.mypokedex.data.local.entity.TypeElementEntity
+import com.ervin.mypokedex.data.local.entity.*
+import com.ervin.mypokedex.data.model.SimplePokemonWithTypePojoModel
+import com.ervin.mypokedex.data.model.TypeElementModel
 
 class LocalRepository(private val dao: PokemonDao) {
 
     companion object {
         private var INSTACE: LocalRepository? = null
-        fun getInstance(pokemonDao: PokemonDao): LocalRepository{
-            return INSTACE?: LocalRepository(pokemonDao)
+        fun getInstance(pokemonDao: PokemonDao): LocalRepository {
+            return INSTACE ?: LocalRepository(pokemonDao)
         }
     }
 
-    suspend fun insertPokemonType(data: List<TypeElementEntity>) {
+    suspend fun insertPokemonType(
+        data: List<TypeElementEntity>,
+        listTypeEffective: List<TypeElementSuperEffectiveEntity>,
+        listTypeNotEffective: List<TypeElementNotEffectiveEntity>,
+        listTypeNoDamage: List<TypeElementNoDamageEntity>
+    ) {
         dao.insertAllTypeElement(data)
+        dao.insertAllTypeElementSuperEffective(listTypeEffective)
+        dao.insertAllTypeElementNotEffective(listTypeNotEffective)
+        dao.insertAllTypeElementNoDamage(listTypeNoDamage)
     }
 
     suspend fun insertPokemon(data: List<PokemonEntity>) {
         dao.insertAllPokemon(data)
     }
 
-    suspend fun insertCompositePokemonType(data: List<PokemonTypeElementEntity>){
+    suspend fun insertCompositePokemonType(data: List<PokemonTypeElementEntity>) {
         dao.insertCompositePokemonType(data)
     }
 
-    fun getPokemonWithType(): DataSource.Factory<Int,SimplePokemonWithTypePojo> {
+    fun getPokemonWithType(): DataSource.Factory<Int, SimplePokemonWithTypePojoModel> {
         return dao.getPokemonWithType()
     }
 
-//    suspend fun getPokemonWithTypeNonPagedList(): List<PokemonWithTypePojo>{
-//        return dao.getPokemonWithTypeNonPagedList()
-//    }
+    suspend fun getTypePokemon(): List<TypeElementModel>{
+        return dao.getTypePokemon()
+    }
 
-    suspend fun getCountPokemon(): Int{
+    suspend fun getCountPokemon(): Int {
         return dao.getCountPokemon()
     }
 

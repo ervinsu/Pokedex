@@ -34,11 +34,15 @@ class MainActivity : AppCompatActivity() {
         mainViewModel = obtainViewModel(this@MainActivity)
         try {
             mainViewModel.apply {
-                getPokemonType().observe(this@MainActivity, Observer {
-                    for(i in it.indices){
-                        Log.d("getPokemon","${it[i].typeEntity.typeName} ${it[i].typeSuperEffectiveEntity.size}")
-                    }
-                })
+//                getPokemonType().observe(this@MainActivity, Observer {
+//                    for(i in it.indices){
+//                        Log.d("getPokemon","${it[i].typeEntity.typeName} ${it[i].typeSuperEffectiveEntity.size}")
+//                    }
+//                })
+
+//                getSpecificPokemon().observe(this@MainActivity, Observer {
+//                    Log.d("getPokemon", "${it.pokemon.pokemonName} ${it.typeElementPokemon.typeSuperEffectiveEntity.size}")
+//                })
 
                 //get saved pokemon
                 getLocalPokemon().observe(this@MainActivity, Observer { returnedValue ->

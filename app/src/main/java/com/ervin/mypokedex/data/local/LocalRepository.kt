@@ -2,6 +2,7 @@ package com.ervin.mypokedex.data.local
 
 import androidx.paging.DataSource
 import com.ervin.mypokedex.data.local.entity.*
+import com.ervin.mypokedex.data.model.PokemonModel
 import com.ervin.mypokedex.data.model.SimplePokemonWithTypePojoModel
 import com.ervin.mypokedex.data.model.TypeElementModel
 
@@ -38,7 +39,11 @@ class LocalRepository(private val dao: PokemonDao) {
         return dao.getPokemonWithType()
     }
 
-    suspend fun getTypePokemon(): List<TypeElementModel>{
+    suspend fun getSpecificPokemon(pokemonId: Int): PokemonModel {
+        return dao.getSpecificPokemon(pokemonId)
+    }
+
+    suspend fun getTypePokemon(): List<TypeElementModel> {
         return dao.getTypePokemon()
     }
 

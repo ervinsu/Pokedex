@@ -9,6 +9,7 @@ import androidx.paging.PagedList
 import com.ervin.mypokedex.App
 import com.ervin.mypokedex.data.local.LocalRepository
 import com.ervin.mypokedex.data.local.entity.*
+import com.ervin.mypokedex.data.model.PokemonModel
 import com.ervin.mypokedex.data.model.SimplePokemonWithTypePojoModel
 import com.ervin.mypokedex.data.model.TypeElementModel
 import com.ervin.mypokedex.data.remote.RemoteRepository
@@ -102,7 +103,11 @@ class PokemonRepository(
         return LivePagedListBuilder(localRepository.getPokemonWithType(), myPagingConfig).build()
     }
 
-    suspend fun getTypePokemon():List<TypeElementModel>{
+    suspend fun getSpecificPokemon(pokemonId: Int):PokemonModel{
+        return localRepository.getSpecificPokemon(pokemonId)
+    }
+
+    suspend fun getTypePokemon(): List<TypeElementModel> {
         return localRepository.getTypePokemon()
     }
 

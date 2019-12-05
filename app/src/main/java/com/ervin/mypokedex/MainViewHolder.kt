@@ -1,6 +1,8 @@
 package com.ervin.mypokedex.ui.main
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
@@ -8,8 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.util.Pair
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.ervin.mypokedex.Main2Activity
 import com.ervin.mypokedex.R
 import com.ervin.mypokedex.data.model.SimplePokemonWithTypePojoModel
 
@@ -24,9 +29,20 @@ class MainViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     init {
         view.setOnClickListener {
-            simplePokemonItemPojoModel?.pokemonModel?.pokemonId?.let { pokemonID ->
-                //                val intent = Intent(this, )
-//                view.context.startActivity(intent)
+            simplePokemonItemPojoModel?.pokemonModel?.let { pokemon ->
+                val intent = Intent(view.context, Main2Activity::class.java)
+                val pPokePicture =  Pair.create<View,String>(picture,"pokePicture")
+                val pPokeContainer =  Pair.create(pokeContainer,"pokeContainer")
+                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    view.context as Activity,
+                    pPokeContainer,
+                    pPokePicture
+//                    Pair.create(picture,"pokePicture"),
+//                    Pair.create(pokeContainer, "pokeContainer")
+                )
+                intent.putExtra("tes",pokemon.pokemonId)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                view.context.startActivity(intent,options.toBundle())
             }
         }
     }

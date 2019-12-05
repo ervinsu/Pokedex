@@ -3,6 +3,7 @@ package com.ervin.mypokedex.data.local
 import androidx.paging.DataSource
 import androidx.room.*
 import com.ervin.mypokedex.data.local.entity.*
+import com.ervin.mypokedex.data.model.PokemonModel
 import com.ervin.mypokedex.data.model.SimplePokemonWithTypePojoModel
 import com.ervin.mypokedex.data.model.TypeElementModel
 
@@ -37,6 +38,10 @@ interface PokemonDao {
     @Transaction
     @Query("SELECT * from TypeTable")
     suspend fun getTypePokemon() : List<TypeElementModel>
+
+    @Transaction
+    @Query("SELECT * from PokemonTable WHERE pokemonId = :pokemonId1")
+    suspend fun getSpecificPokemon(pokemonId1:Int): PokemonModel
 
     @Transaction
     @Query("SELECT COUNT(PokemonId) from PokemonTable")

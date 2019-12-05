@@ -41,7 +41,7 @@ class TableTypeSuperElementEffective{
     companion object{
         const val TypeID: String ="typeClassId"
         const val TypeSuperEffectiveTable: String ="TypeEffectiveTable"
-        const val TypeIDSuperEffective: String ="typeIDEffective"
+        const val TypeIDSuperEffective: String ="typeIDEffectiveTo"
     }
 }
 
@@ -50,7 +50,7 @@ class TableTypeElementNotEffective{
     companion object{
         const val TypeID: String ="typeClassId"
         const val TypeNotEffectiveTable: String ="TypeNotEffectiveTable"
-        const val TypeIDNotEffective: String ="typeIDNotEffective"
+        const val TypeIDNotEffective: String ="typeIDNotEffectiveTo"
     }
 }
 
@@ -58,6 +58,6 @@ class TableTypeElementNoDamage{
     companion object{
         const val TypeID: String ="typeClassId"
         const val TypeNoDamageTable: String ="typeNoDamageTable"
-        const val TypeIDNoDamage: String ="typeIDNoDamage"
+        const val TypeIDNoDamage: String ="typeIDNoDamageTo"
     }
 }

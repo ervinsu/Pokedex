@@ -166,6 +166,10 @@ class MainViewModel(private val pokemonRepository: PokemonRepository) : ViewMode
         emit(pokemonRepository.getTypePokemon())
     }
 
+    fun getSpecificPokemon() = liveData {
+        emit(pokemonRepository.getSpecificPokemon(1))
+    }
+
     fun loadRemoteTypesPokemon(): Flow<Boolean> = flow {
         var returned = false
         if (pokemonRepository.getLocalCountPokemonTypes() == 0) {

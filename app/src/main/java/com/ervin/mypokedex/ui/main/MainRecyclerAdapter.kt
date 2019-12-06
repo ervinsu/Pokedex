@@ -1,4 +1,4 @@
-package com.ervin.mypokedex
+package com.ervin.mypokedex.ui.main
 
 
 import android.view.ViewGroup
@@ -6,9 +6,10 @@ import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.ervin.mypokedex.data.model.SimplePokemonWithTypePojoModel
-import com.ervin.mypokedex.ui.main.MainViewHolder
 
-class MainRecyclerAdapter:PagedListAdapter<SimplePokemonWithTypePojoModel, RecyclerView.ViewHolder>(DATA_COMPARATOR) {
+class MainRecyclerAdapter:PagedListAdapter<SimplePokemonWithTypePojoModel, RecyclerView.ViewHolder>(
+    DATA_COMPARATOR
+) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return MainViewHolder.create(parent)
     }

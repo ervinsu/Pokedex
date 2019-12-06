@@ -14,23 +14,23 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.Pair
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.ervin.mypokedex.Main2Activity
 import com.ervin.mypokedex.R
 import com.ervin.mypokedex.data.model.SimplePokemonWithTypePojoModel
+import com.ervin.mypokedex.ui.detail.DetailActivity
 
 
 class MainViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     private val name: TextView = view.findViewById(R.id.pokeName)
-    private val picture: ImageView = view.findViewById(R.id.pokePicture)
+    private val picture: ImageView = view.findViewById(R.id.poke_picture)
     private val container: View = view.findViewById(R.id.container_main_item)
-    private val pokeContainer: View = view.findViewById(R.id.pokeContainer)
+    private val pokeContainer: View = view.findViewById(R.id.poke_container)
 
     private var simplePokemonItemPojoModel: SimplePokemonWithTypePojoModel? = null
 
     init {
         view.setOnClickListener {
             simplePokemonItemPojoModel?.pokemonModel?.let { pokemon ->
-                val intent = Intent(view.context, Main2Activity::class.java)
+                val intent = Intent(view.context, DetailActivity::class.java)
                 val pPokePicture =  Pair.create<View,String>(picture,"pokePicture")
                 val pPokeContainer =  Pair.create(pokeContainer,"pokeContainer")
                 val options = ActivityOptionsCompat.makeSceneTransitionAnimation(

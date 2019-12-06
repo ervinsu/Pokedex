@@ -94,16 +94,16 @@ class PokemonRepository(
         return remoteRepository.loadPokemons(offset, limit)
     }
 
-    fun getLocalPokemon(): LiveData<PagedList<SimplePokemonWithTypePojoModel>> {
+    fun getLocalPokemon(pokeName: String): LiveData<PagedList<SimplePokemonWithTypePojoModel>> {
         val myPagingConfig = Config(
             pageSize = 50,
             prefetchDistance = 150,
             enablePlaceholders = true
         )
-        return LivePagedListBuilder(localRepository.getPokemonWithType(), myPagingConfig).build()
+        return LivePagedListBuilder(localRepository.getPokemonWithType(pokeName), myPagingConfig).build()
     }
 
-    suspend fun getSpecificPokemon(pokemonId: Int):PokemonModel{
+    suspend fun getSpecificPokemon(pokemonId: Int): PokemonModel {
         return localRepository.getSpecificPokemon(pokemonId)
     }
 

@@ -4,4 +4,7 @@
     <string name="loading">loading</string>
     <string name="currently_create_a_magic">Currently create a magic</string>
     <string name="No_Connection">Connection not Available</string>
+    <string name="poke_picture">pokePicture</string>
+    <string name="search_pokemon">Search</string>
+    <string name="refresh_pokemon">Refresh Pokemon</string>
 </resources>

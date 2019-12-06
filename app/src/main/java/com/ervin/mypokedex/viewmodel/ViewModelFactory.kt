@@ -3,9 +3,9 @@ package com.ervin.mypokedex.viewmodel
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.ervin.mypokedex.di.Injection
-import com.ervin.mypokedex.MainViewModel
 import com.ervin.mypokedex.data.PokemonRepository
+import com.ervin.mypokedex.di.Injection
+import com.ervin.mypokedex.ui.main.MainViewModel
 
 @Suppress("UNCHECKED_CAST")
 class ViewModelFactory(repository: PokemonRepository): ViewModelProvider.NewInstanceFactory() {

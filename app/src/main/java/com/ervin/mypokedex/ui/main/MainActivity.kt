@@ -1,12 +1,21 @@
-package com.ervin.mypokedex
+package com.ervin.mypokedex.ui.main
 
+import android.annotation.SuppressLint
+import android.app.SearchManager
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import com.ervin.mypokedex.R
 import com.ervin.mypokedex.utils.Utils
+import com.ervin.mypokedex.utils.hideKeyboard
 import com.ervin.mypokedex.utils.setGone
 import com.ervin.mypokedex.viewmodel.ViewModelFactory
 import com.google.android.material.snackbar.Snackbar
@@ -21,7 +30,7 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
 
     private val adapter = MainRecyclerAdapter()
-    private lateinit var mainViewModel:MainViewModel
+    private lateinit var mainViewModel: MainViewModel
     private val job = Job()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,6 +38,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 //        val time = "15:00:15"
 //        Log.d("tes",time.toDate()?.formatToString("HH:mm:ss"))
+        setSupportActionBar(main_toolbar)
+        supportActionBar?.title = "title"
         initAdapter()
 
         mainViewModel = obtainViewModel(this@MainActivity)
@@ -45,7 +56,7 @@ class MainActivity : AppCompatActivity() {
 //                })
 
                 //get saved pokemon
-                getLocalPokemon().observe(this@MainActivity, Observer { returnedValue ->
+                getLocalPokemon("").observe(this@MainActivity, Observer { returnedValue ->
                     val sizeData = returnedValue.data?.size
                     Log.d("test11", "${sizeData.toString()} ")
                     if (sizeData != 0) {
@@ -148,18 +159,6 @@ class MainActivity : AppCompatActivity() {
         job.cancel()
     }
 
-//    fun String.toDate(dateFormat:String = "HH:mm:ss",timeZone : TimeZone = TimeZone.getTimeZone("UTC")):Date?{
-//        val parser = SimpleDateFormat(dateFormat, Locale.getDefault())
-//        parser.timeZone = timeZone
-//        return parser.parse(this)
-//    }
-//
-//    fun Date.formatToString(dateFormat: String, timeZone: TimeZone = TimeZone.getDefault()):String{
-//        val formatter = SimpleDateFormat(dateFormat, Locale.getDefault())
-//        formatter.timeZone = timeZone
-//        return formatter.format(this)
-//    }
-
     private fun initAdapter() {
         rv_list_main.adapter = adapter
 
@@ -171,8 +170,53 @@ class MainActivity : AppCompatActivity() {
         rv_list_main.layoutManager = layoutManager
     }
 
+    @SuppressLint("ObsoleteSdkInt")
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
+            val manager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
 
-    private fun obtainViewModel(activity: MainActivity):MainViewModel{
+            val search: SearchView = menu?.findItem(R.id.app_bar_search)?.actionView as SearchView
+
+            search.setSearchableInfo(manager.getSearchableInfo(componentName))
+
+            search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    this@MainActivity.hideKeyboard()
+                    return true
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    mainViewModel.apply {
+                        getLocalPokemon(newText.toString()).observe(this@MainActivity, Observer { returnedValue ->
+                            val sizeData = returnedValue.data?.size
+                            Log.d("test22", "${sizeData.toString()} ")
+                            if (sizeData != 0) {
+                                adapter.submitList(returnedValue.data)
+                                adapter.notifyDataSetChanged()
+                                tv_magic_layout.setGone()
+                            }
+                        })
+                    }
+                    return true
+                }
+            })
+        }
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId){
+            R.id.app_bar_refresh_fetch_pokemon->{
+                Snackbar.make(window.decorView, "Clickeddd",Snackbar.LENGTH_LONG).show()
+                true
+            }
+            else -> super.onContextItemSelected(item)
+        }
+    }
+
+
+    private fun obtainViewModel(activity: MainActivity): MainViewModel {
         val factory: ViewModelFactory = ViewModelFactory.getInstance(activity.application)
         return ViewModelProvider(activity, factory).get(MainViewModel::class.java)
     }

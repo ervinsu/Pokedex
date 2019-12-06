@@ -1,7 +1,6 @@
 package com.ervin.mypokedex.di
 
-import com.ervin.mypokedex.App
-import com.ervin.mypokedex.MainActivity
+import com.ervin.mypokedex.ui.main.MainActivity
 import dagger.Component
 
 @Component(modules = [RetrofitClientModule::class])

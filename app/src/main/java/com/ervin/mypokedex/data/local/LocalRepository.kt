@@ -35,8 +35,8 @@ class LocalRepository(private val dao: PokemonDao) {
         dao.insertCompositePokemonType(data)
     }
 
-    fun getPokemonWithType(): DataSource.Factory<Int, SimplePokemonWithTypePojoModel> {
-        return dao.getPokemonWithType()
+    fun getPokemonWithType(pokeName: String): DataSource.Factory<Int, SimplePokemonWithTypePojoModel> {
+        return dao.getPokemonWithType(pokeName)
     }
 
     suspend fun getSpecificPokemon(pokemonId: Int): PokemonModel {

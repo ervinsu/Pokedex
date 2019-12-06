@@ -9,6 +9,7 @@ import android.content.Context.NOTIFICATION_SERVICE
 import android.os.Build
 import android.util.DisplayMetrics
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.core.app.NotificationCompat
 import com.ervin.mypokedex.R
 import java.net.InetAddress
@@ -63,6 +64,12 @@ fun Context.getNotificationBuilder(channelId: String, importance: Int): Notifica
     } else {
         NotificationCompat.Builder(this, channelId)
     }
+}
+
+fun Activity.hideKeyboard(){
+    val imm = this.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+    val view = this.currentFocus?:View(this)
+    imm.hideSoftInputFromWindow(view.windowToken,0)
 }
 
 @TargetApi(26)

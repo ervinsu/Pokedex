@@ -32,16 +32,16 @@ interface PokemonDao {
     suspend fun insertCompositePokemonType(pokemonWithTypes: List<PokemonTypeElementEntity>)
 
     @Transaction
-    @Query("SELECT pokemonId, pokemonName, pokemonSpritesUrl from PokemonTable")
-    fun getPokemonWithType() : DataSource.Factory<Int, SimplePokemonWithTypePojoModel>
+    @Query("SELECT pokemonId, pokemonName, pokemonSpritesUrl from PokemonTable WHERE pokemonName like '%' ||:pokeName || '%'")
+    fun getPokemonWithType(pokeName: String): DataSource.Factory<Int, SimplePokemonWithTypePojoModel>
 
     @Transaction
     @Query("SELECT * from TypeTable")
-    suspend fun getTypePokemon() : List<TypeElementModel>
+    suspend fun getTypePokemon(): List<TypeElementModel>
 
     @Transaction
     @Query("SELECT * from PokemonTable WHERE pokemonId = :pokemonId1")
-    suspend fun getSpecificPokemon(pokemonId1:Int): PokemonModel
+    suspend fun getSpecificPokemon(pokemonId1: Int): PokemonModel
 
     @Transaction
     @Query("SELECT COUNT(PokemonId) from PokemonTable")

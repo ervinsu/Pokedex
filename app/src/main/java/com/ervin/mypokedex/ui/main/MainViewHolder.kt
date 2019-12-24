@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,7 +22,7 @@ import com.ervin.mypokedex.ui.detail.DetailActivity
 
 class MainViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     private val name: TextView = view.findViewById(R.id.pokeName)
-    private val picture: ImageView = view.findViewById(R.id.poke_picture)
+    private val picture: ImageView = view.findViewById(R.id.iv_poke_picture)
     private val container: View = view.findViewById(R.id.container_main_item)
     private val pokeContainer: View = view.findViewById(R.id.poke_container)
 
@@ -37,12 +38,13 @@ class MainViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                     view.context as Activity,
                     pPokeContainer,
                     pPokePicture
-//                    Pair.create(picture,"pokePicture"),
-//                    Pair.create(pokeContainer, "pokeContainer")
                 )
                 intent.putExtra("tes",pokemon.pokemonId)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                view.context.startActivity(intent,options.toBundle())
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                    view.context.startActivity(intent,options.toBundle())
+                else
+                    view.context.startActivity(intent)
             }
         }
     }

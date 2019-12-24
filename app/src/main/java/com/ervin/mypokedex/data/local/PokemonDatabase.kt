@@ -14,7 +14,7 @@ import com.ervin.mypokedex.data.local.entity.*
         TypeElementNotEffectiveEntity::class,
         TypeElementNoDamageEntity::class
     ]
-    , version = 1
+    , version = 2
     , exportSchema = false
 )
 abstract class PokemonDatabase : RoomDatabase() {

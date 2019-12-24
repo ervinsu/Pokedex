@@ -15,8 +15,8 @@ import com.ervin.mypokedex.utils.TableTypeSuperElementEffective
     )]
 )
 data class TypeElementSuperEffectiveEntity(
-    @ColumnInfo(name = TableTypeSuperElementEffective.TypeID)
+    @ColumnInfo(name = TableTypeSuperElementEffective.TypeID, index = true)
     val ck_typeId: Int,
-    @ColumnInfo(name = TableTypeSuperElementEffective.TypeIDSuperEffective)
+    @ColumnInfo(name = TableTypeSuperElementEffective.TypeIDSuperEffective, index = true)
     val ck_typeEffectiveId: Int
 )

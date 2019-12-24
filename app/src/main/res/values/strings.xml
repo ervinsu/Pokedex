@@ -7,4 +7,6 @@
     <string name="poke_picture">pokePicture</string>
     <string name="search_pokemon">Search</string>
     <string name="refresh_pokemon">Refresh Pokemon</string>
+    <string name="hp">HP</string>
+    <string name="attack">Attack</string>
 </resources>

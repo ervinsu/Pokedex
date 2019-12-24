@@ -5,9 +5,6 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.net.Uri
-import android.os.Environment
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationManagerCompat
@@ -22,12 +19,12 @@ import com.ervin.mypokedex.utils.ONGOING_CHANNEL_ID
 import com.ervin.mypokedex.utils.ON_LOADING_POKEMON
 import com.ervin.mypokedex.utils.cancelNotification
 import com.ervin.mypokedex.utils.getNotificationBuilder
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import me.sargunvohra.lib.pokekotlin.client.PokeApiClient
 import me.sargunvohra.lib.pokekotlin.model.Pokemon
-import java.io.File
-import java.io.FileOutputStream
-import java.io.OutputStream
 
 
 class LaunchAppService : Service() {
@@ -41,7 +38,7 @@ class LaunchAppService : Service() {
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         val manager: NotificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        createNotification()
+        createNotificationOnProgress()
         val pokeRepo = Injection.provideRepository(App())
         CoroutineScope(job + Dispatchers.IO).launch {
             try {
@@ -52,7 +49,7 @@ class LaunchAppService : Service() {
                 val maxLimit = limit - (limit % 100)
                 var i = 1
                 while (count < maxLimit) {
-                    manager.notify(ON_LOADING_POKEMON,updateNotificationForRemote(maxLimit/100, i))
+                    manager.notify(ON_LOADING_POKEMON,updateNotificationForRemoteOnProgress(maxLimit/100, i))
                     getRemotePokemon(pokeRepo, count, 100)
                     count += 100
                     i++
@@ -130,7 +127,7 @@ class LaunchAppService : Service() {
         pokeRepo.saveLocalPokemons(pokemonEntities, pokemonCompositeType)
     }
 
-    private fun createNotification() {
+    private fun createNotificationOnProgress() {
         currentNotify = ON_LOADING_POKEMON
         // create notification and register the channel with the app
         val builder = getNotificationBuilder(
@@ -146,10 +143,10 @@ class LaunchAppService : Service() {
         startForeground(ON_LOADING_POKEMON, notification)
     }
 
-    private fun updateNotificationForRemote(max:Int, progress:Int):Notification{
+    private fun updateNotificationForRemoteOnProgress(max:Int, progress:Int):Notification{
         val builder = getNotificationBuilder(
             ONGOING_CHANNEL_ID,
-            NotificationManagerCompat.IMPORTANCE_HIGH
+            NotificationManagerCompat.IMPORTANCE_LOW
         ).apply {
             setOngoing(true)
             setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -169,44 +166,6 @@ class LaunchAppService : Service() {
         intent.putExtra(RESULT_FETCHING_POKEMON, boolean)
         LocalBroadcastManager.getInstance(App().getContext()).sendBroadcast(intent)
     }
-
-    private fun saveImage(image: Bitmap): String? {
-        var savedImagePath: String? = null
-        val imageFileName = "JPEG_" + "FILE_NAME" + ".jpg"
-        val storageDir = File(
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-                .toString() + "/YOUR_FOLDER_NAME"
-        )
-        var success = true
-        if (!storageDir.exists()) {
-            success = storageDir.mkdirs()
-        }
-        if (success) {
-            val imageFile = File(storageDir, imageFileName)
-            savedImagePath = imageFile.getAbsolutePath()
-            try {
-                val fOut: OutputStream = FileOutputStream(imageFile)
-                image.compress(Bitmap.CompressFormat.JPEG, 100, fOut)
-                fOut.close()
-            } catch (e: java.lang.Exception) {
-                e.printStackTrace()
-                Log.d("imagesaved", e.message.toString())
-            }
-            // Add the image to the system gallery
-            galleryAddPic(savedImagePath)
-            Log.d("imagesaved", savedImagePath.toString())
-        }
-        return savedImagePath
-    }
-
-    private fun galleryAddPic(imagePath: String?) {
-        val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
-        val f = File(imagePath)
-        val contentUri: Uri = Uri.fromFile(f)
-        mediaScanIntent.data = contentUri
-        sendBroadcast(mediaScanIntent)
-    }
-
 
     companion object {
         private const val TAG = "TEST_SERVICE"

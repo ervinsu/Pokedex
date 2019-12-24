@@ -36,8 +36,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-//        val time = "15:00:15"
-//        Log.d("tes",time.toDate()?.formatToString("HH:mm:ss"))
         setSupportActionBar(main_toolbar)
         supportActionBar?.title = "title"
         initAdapter()
@@ -45,16 +43,6 @@ class MainActivity : AppCompatActivity() {
         mainViewModel = obtainViewModel(this@MainActivity)
         try {
             mainViewModel.apply {
-//                getPokemonType().observe(this@MainActivity, Observer {
-//                    for(i in it.indices){
-//                        Log.d("getPokemon","${it[i].typeEntity.typeName} ${it[i].typeSuperEffectiveEntity.size}")
-//                    }
-//                })
-
-//                getSpecificPokemon().observe(this@MainActivity, Observer {
-//                    Log.d("getPokemon", "${it.pokemon.pokemonName} ${it.typeElementPokemon.typeSuperEffectiveEntity.size}")
-//                })
-
                 //get saved pokemon
                 getLocalPokemon("").observe(this@MainActivity, Observer { returnedValue ->
                     val sizeData = returnedValue.data?.size
@@ -89,6 +77,8 @@ class MainActivity : AppCompatActivity() {
                             if(!it){
                                 setIsDataLoaded(true)
                                 CoroutineScope(job + Dispatchers.Main).launch{
+                                    getCountRemotePokemon()
+
                                     loadRemoteTypesPokemon().collect {status->
                                         Log.d("remoteTypes",status.toString())
                                         if (!status){
@@ -104,7 +94,7 @@ class MainActivity : AppCompatActivity() {
                                         }
                                     }
 
-                                    loadRemotePokemons().collect{status->
+                                    loadRemotePokemons2().observe(this@MainActivity, Observer {status->
                                         Log.d("remotePokemon",status.toString())
                                         if (!status){
                                             val feedback = Snackbar.make(
@@ -117,7 +107,23 @@ class MainActivity : AppCompatActivity() {
                                         }else{
                                             Snackbar.make(window.decorView, "Database List Added",Snackbar.LENGTH_LONG).show()
                                         }
-                                    }
+
+                                    })
+
+//                                    loadRemotePokemons().collect{status->
+//                                        Log.d("remotePokemon",status.toString())
+//                                        if (!status){
+//                                            val feedback = Snackbar.make(
+//                                                window.decorView,
+//                                                "No Internet Connection",
+//                                                Snackbar.LENGTH_LONG
+//                                            )
+//                                            feedback.setAction("Try Again") { mainViewModel.loadRemoteTypesPokemon() }
+//                                            feedback.show()
+//                                        }else{
+//                                            Snackbar.make(window.decorView, "Database List Added",Snackbar.LENGTH_LONG).show()
+//                                        }
+//                                    }
 
                                     //handling result fetching
                                     getFetchBoolean().observe(this@MainActivity, Observer {status->

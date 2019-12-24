@@ -30,7 +30,6 @@ class MainViewModel(private val pokemonRepository: PokemonRepository) : ViewMode
     private var countPokemon = MutableLiveData<Int>()
     private val booleanFetch = MutableLiveData<Boolean>()
     private val isDataLoaded = MutableLiveData<Boolean>(false)
-    private var currOffset = 0
 
     private val mMessageReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -51,45 +50,6 @@ class MainViewModel(private val pokemonRepository: PokemonRepository) : ViewMode
     fun getIsDataLoaded(): LiveData<Boolean> {
         return isDataLoaded
     }
-
-//    private val listPokemonPojo: LiveData<List<PokemonWithTypePojo>> = Transformations.switchMap(countPokemon){ countPokemon->
-//
-//        liveData(Dispatchers.IO) {
-//            val processedList:MutableList<Pokemon> = ArrayList()
-//            try {
-//                val retrievedList = pokemonRepository.loadListPokemon()
-//                val pokeApi = PokeApiClient()
-//                retrievedList.listResponseAPI.forEach { simplePokemonResponse->
-//                    val pokemonID = simplePokemonResponse.urlResponse.split("/")[6].toInt()
-//                    Log.d("test",pokemonID.toString())
-//                    processedList.add(pokeApi.getPokemon(pokemonID))
-//                }
-//                val pokemonEntities: MutableList<PokemonEntity> = ArrayList()
-//                val pokemonCompositeType: MutableList<PokemonTypeElementEntity> = ArrayList()
-//                processedList.forEach{pokemon->
-////                    pokemonEntities.add(
-////                        PokemonEntity(
-////                            pokemon.id,
-////                            pokemon.name,
-////                            pokemon.sprites.frontDefault ?: ""
-////                        )
-////                    )
-//                    pokemon.types.forEach{pokemonType->
-//                        pokemonCompositeType.add(
-//                            PokemonTypeElementEntity(
-//                                pokemon.id,
-//                                pokemonType.type.id
-//                            )
-//                        )
-//                    }
-//                }
-//                pokemonRepository.saveLocalPokemons(pokemonEntities,pokemonCompositeType)
-////                emit(pokemonRepository.getLocalPokemonWithType())
-//            }catch (e:Exception){
-//                Log.d("errorListPokemon",e.message.toString())
-//            }
-//        }
-//    }
 
     fun getFetchBoolean(): LiveData<Boolean> {
         return booleanFetch
@@ -138,6 +98,20 @@ class MainViewModel(private val pokemonRepository: PokemonRepository) : ViewMode
             false
         }
         emit(returned)
+    }
+
+
+    fun loadRemotePokemons2(): LiveData<Boolean> = Transformations.switchMap(countPokemon){count->
+        liveData(Dispatchers.IO) {
+            Log.d("countPokemon",count.toString())
+            val returned: Boolean = try {
+                pokemonRepository.isPokemonAvailable(count)
+                true
+            } catch (e: java.lang.Exception) {
+                false
+            }
+            emit(returned)
+        }
     }
 
     fun updateRemotePokemons(): Flow<Boolean> = flow {
@@ -280,10 +254,13 @@ class MainViewModel(private val pokemonRepository: PokemonRepository) : ViewMode
                 val pokeApi = PokeApiClient()
                 val b = pokeApi.getPokemonList(5, 6)
                 b.results[0].id
+                val species = pokeApi.getPokemonSpecies(2)
+                Log.d("species", "${species.evolvesFromSpecies?.id.toString()} ${species.evolutionChain.id}")
+//                val evolvechain = pokeApi.getEvolutionChain(1)
+//                val chain = evolvechain.chain.evolvesTo.
             } catch (e: java.lang.Exception) {
                 Log.d("tess", e.message.toString())
             }
-            //            println(bulbasaur)
         }
     }
 }

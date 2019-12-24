@@ -6,6 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/container_main_item"
+        android:layout_margin="4sp"
         android:paddingBottom="15dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -14,11 +15,12 @@
         <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/image_inDp"
-                android:id="@+id/poke_picture"
+                android:id="@+id/iv_poke_picture"
                 android:transitionName="pokePicture"
                 android:src="@drawable/ic_launcher_background"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                android:background="?attr/selectableItemBackground"
                 android:elevation="5dp"
                 android:contentDescription="@string/poke_picture"
                 android:layout_margin="8sp"/>
@@ -42,9 +44,9 @@
                 android:id="@+id/pokeName"
                 android:textSize="@dimen/textSize"
                 android:textColor="@color/black"
-                app:layout_constraintStart_toStartOf="@id/poke_picture"
-                app:layout_constraintEnd_toEndOf="@id/poke_picture"
-                app:layout_constraintTop_toBottomOf="@id/poke_picture"
+                app:layout_constraintStart_toStartOf="@id/iv_poke_picture"
+                app:layout_constraintEnd_toEndOf="@id/iv_poke_picture"
+                app:layout_constraintTop_toBottomOf="@id/iv_poke_picture"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:paddingBottom="10sp"/>
     </androidx.constraintlayout.widget.ConstraintLayout>

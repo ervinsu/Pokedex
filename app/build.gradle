@@ -31,6 +31,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    dataBinding {
+        enabled = true
+    }
 }
 
 dependencies {
@@ -50,7 +54,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.2.0-alpha02'
 
     //room
-    ext.room_version = '2.2.2'
+    ext.room_version = '2.2.3'
     //annotationProcessor "androidx.room:room-compiler:$roomVersion"
     kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-runtime:$room_version"
@@ -59,7 +63,7 @@ dependencies {
     annotationProcessor "android.arch.persistence.room:compiler:$room_version"
 
     // Dependencies for Paging
-    ext.paging_version = '2.1.0'
+    ext.paging_version = '2.1.1'
     implementation "androidx.paging:paging-runtime-ktx:$paging_version"
 
     //coroutines
@@ -69,13 +73,16 @@ dependencies {
 
 
     // ViewModel and LiveData
-    ext.lifecycle_version = '2.2.0-rc02'
+    ext.lifecycle_version = '2.2.0-rc03'
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     annotationProcessor "android.arch.lifecycle:compiler:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     implementation 'com.squareup.retrofit2:converter-scalars:2.1.0'
+
+    ext.databinding_version = '3.1.4'
+    kapt "com.android.databinding:compiler:$databinding_version"
 
 
     //pokemon

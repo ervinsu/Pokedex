@@ -13,8 +13,8 @@ import com.ervin.mypokedex.utils.TablePokemonTypeElement
         TablePokemonTypeElement.PokemonTypeElementID])]
     )
 data class PokemonTypeElementEntity(
-    @ColumnInfo(name = TablePokemonTypeElement.PokemonTypeElementPokemonID)
+    @ColumnInfo(name = TablePokemonTypeElement.PokemonTypeElementPokemonID, index = true)
     val ck_pokemonId: Int,
-    @ColumnInfo(name = TablePokemonTypeElement.PokemonTypeElementID)
+    @ColumnInfo(name = TablePokemonTypeElement.PokemonTypeElementID, index = true)
     val ck_typeId: Int
 )

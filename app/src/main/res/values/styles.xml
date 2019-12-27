@@ -9,4 +9,12 @@
         <item name="android:windowContentTransitions">true</item>
     </style>
 
+    <style name="CustomProgressBarHorizontal" parent="android:Widget.ProgressBar.Horizontal">
+        <item name="android:scaleY">1</item>
+        <item name="android:max">150</item>
+        <item name="android:minWidth">100sp</item>
+        <item name="android:progressTint">@color/black</item>
+        <item name="android:progressBackgroundTint">@color/lightGrey</item>
+    </style>
+
 </resources>

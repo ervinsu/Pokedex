@@ -35,26 +35,26 @@ class LaunchAppService : Service() {
         return null
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val manager: NotificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         createNotificationOnProgress()
         val pokeRepo = Injection.provideRepository(App())
         CoroutineScope(job + Dispatchers.IO).launch {
             try {
-                val offset = intent.getIntExtra("offset", 0)
-                val limit = intent.getIntExtra("limit", 0) - offset
+                val offset = intent?.getIntExtra("offset", 0)?:0
+                val limit = intent?.getIntExtra("limit", 0)?:0 - offset
                 Log.d("tag", "$offset $limit")
                 var count = offset
-                val maxLimit = limit - (limit % 100)
+                val maxLimit = limit - (limit % 10)
                 var i = 1
                 while (count < maxLimit) {
-                    manager.notify(ON_LOADING_POKEMON,updateNotificationForRemoteOnProgress(maxLimit/100, i))
-                    getRemotePokemon(pokeRepo, count, 100)
-                    count += 100
+                    manager.notify(ON_LOADING_POKEMON,updateNotificationForRemoteOnProgress(maxLimit/10, i))
+                    getRemotePokemon(pokeRepo, count, 10)
+                    count += 10
                     i++
                 }
-                val currLimit = limit % 100
+                val currLimit = limit % 10
                 getRemotePokemon(pokeRepo, count, currLimit)
                 sendFeedbackToActivity(true)
             } catch (e: Exception) {
@@ -69,11 +69,17 @@ class LaunchAppService : Service() {
     }
 
     private suspend fun getRemotePokemon(pokeRepo: PokemonRepository, offset: Int, limit: Int) {
-        val retrievedList = pokeRepo.getRemotePokemonLimit(offset, limit)
+//        val retrievedList = pokeRepo.getRemotePokemonLimit(offset, limit)
         val pokeApi = PokeApiClient()
         val remotePokemonList: MutableList<Pokemon> = ArrayList()
-        retrievedList.listResponseAPI.forEach { simplePokemonResponse ->
-            val pokemonID = simplePokemonResponse.urlResponse.split("/")[6].toInt()
+//        retrievedList.listResponseAPI.forEach { simplePokemonResponse ->
+//            val pokemonID = simplePokemonResponse.urlResponse.split("/")[6].toInt()
+//            Log.d("test", pokemonID.toString())
+//            remotePokemonList.add(pokeApi.getPokemon(pokemonID))
+//        }
+        val retrievedList = pokeApi.getPokemonList(offset, limit)
+        retrievedList.results.forEach { simplePokemonResponse ->
+            val pokemonID = simplePokemonResponse.id
             Log.d("test", pokemonID.toString())
             remotePokemonList.add(pokeApi.getPokemon(pokemonID))
         }
@@ -82,39 +88,36 @@ class LaunchAppService : Service() {
 
         remotePokemonList.forEach { pokemon ->
 
-            //                    var imagePath: String? = ""
-//                    Glide.with(App().getContext())
-//                        .asBitmap()
-//                        .load(pokemon.sprites.frontDefault)
-//                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                        .into(object : CustomTarget<Bitmap>(96,96) {
-//                            override fun onLoadCleared(placeholder: Drawable?) {
-//                            }
-//
-//                            override fun onResourceReady(
-//                                resource: Bitmap,
-//                                transition: Transition<in Bitmap>?
-//                            ) {
-//                                imagePath = saveImage(resource)
-//                            }
-//                        }
-            pokemonEntities.add(
-                PokemonEntity(
-                    pokemon.id,
-                    pokemon.name,
-//                            imagePath ?: ""
-                    pokemon.sprites.frontDefault ?: "",
-                    pokemon.stats[0].baseStat,
-                    pokemon.stats[1].baseStat,
-                    pokemon.stats[2].baseStat,
-                    pokemon.stats[3].baseStat,
-                    pokemon.stats[4].baseStat,
-                    pokemon.stats[5].baseStat,
-                    pokemon.weight,
-                    pokemon.baseExperience,
-                    pokemon.height
-                )
+            val objectPoke = PokemonEntity(
+                pokemon.id,
+                pokemon.name,
+                pokemon.sprites.frontDefault ?: "",
+                pokemon.stats[0].baseStat,
+                pokemon.stats[1].baseStat,
+                pokemon.stats[2].baseStat,
+                pokemon.stats[3].baseStat,
+                pokemon.stats[4].baseStat,
+                pokemon.stats[5].baseStat,
+                pokemon.weight,
+                pokemon.baseExperience,
+                pokemon.height
             )
+
+            if(pokemon.id < 10000) {
+                try {
+                    val pokeDesc: String? =
+                        pokeApi.getPokemonSpecies(pokemon.id).flavorTextEntries[1].flavorText
+                    objectPoke.desc = pokeDesc
+                } catch (e: Exception) {
+                    Log.d("errordesc", "noData $e")
+                }
+            }
+            //add to table pokemon
+            pokemonEntities.add(
+                objectPoke
+            )
+
+            //add to composite table types pokemon
             pokemon.types.forEach { pokemonType ->
                 pokemonCompositeType.add(
                     PokemonTypeElementEntity(

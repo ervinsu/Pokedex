@@ -1,7 +1,10 @@
+@file:Suppress("DEPRECATION")
+
 package com.ervin.mypokedex.utils
 
 import android.annotation.TargetApi
 import android.app.Activity
+import android.app.ActivityManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -38,6 +41,16 @@ enum class Status {
     SUCCESS,
     ERROR,
     LOADING
+}
+
+fun isServiceRunning(activity:Activity,serviceClass: Class<*>):Boolean{
+    val manager = activity.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
+    for (service in manager!!.getRunningServices(Int.MAX_VALUE)) {
+        if (serviceClass.name == service.service.className) {
+            return true
+        }
+    }
+    return false
 }
 
 fun isInternetAvailable(): Boolean {

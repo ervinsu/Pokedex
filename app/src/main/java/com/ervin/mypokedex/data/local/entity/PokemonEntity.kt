@@ -47,5 +47,7 @@ data class PokemonEntity(
 
     @ColumnInfo(name = TablePokemon.PokemonHeight)
     val height: Int
-
-)
+) {
+    @ColumnInfo(name = TablePokemon.PokemonDesc)
+    var desc: String? = ""
+}

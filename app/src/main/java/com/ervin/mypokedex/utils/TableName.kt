@@ -15,6 +15,7 @@ class TablePokemon {
         const val PokemonWeight: String = "pokemonWeight"
         const val PokemonBaseExp: String = "pokemonBaseExp"
         const val PokemonHeight: String = "pokemonHeight"
+        const val PokemonDesc: String = "pokemonDesc"
     }
 }
 
@@ -60,4 +61,13 @@ class TableTypeElementNoDamage{
         const val TypeNoDamageTable: String ="typeNoDamageTable"
         const val TypeIDNoDamage: String ="typeIDNoDamageTo"
     }
+}
+
+class TablePokemonEvolveTo{
+   companion object{
+       const val PokemonEvolveTable: String = "pokemonEvolveTable"
+       const val PokemonId: String = "pokemonId"
+       const val PokemonIdEvolveTo: String = "pokemonIdEvolveTo"
+       const val PokemonEvolveRequire:String = "pokemonEvolveRequire"
+   }
 }

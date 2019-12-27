@@ -1,7 +1,6 @@
 package com.ervin.mypokedex.data.remote
 
 import com.ervin.mypokedex.data.remote.entity.ListAPIPokemonResponse
-import com.ervin.mypokedex.data.remote.entity.PokemonResponse
 import com.google.gson.GsonBuilder
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -16,9 +15,6 @@ class RemoteHelper{
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .build().create(PokemonFetchService::class.java)
-    }
-    suspend fun getDetailPokemon(id: String): PokemonResponse {
-        return service.getPokemonDetail(id)
     }
 
     suspend fun getPokemons(offset:Int, limit:Int):ListAPIPokemonResponse{

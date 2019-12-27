@@ -13,10 +13,10 @@ import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.ervin.mypokedex.R
-import com.ervin.mypokedex.utils.Utils
-import com.ervin.mypokedex.utils.hideKeyboard
-import com.ervin.mypokedex.utils.setGone
+import com.ervin.mypokedex.service.LaunchAppService
+import com.ervin.mypokedex.utils.*
 import com.ervin.mypokedex.viewmodel.ViewModelFactory
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
@@ -29,7 +29,7 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
-    private val adapter = MainRecyclerAdapter()
+    private val adapter = MainRecyclerAdapter(this@MainActivity)
     private lateinit var mainViewModel: MainViewModel
     private val job = Job()
 
@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(main_toolbar)
-        supportActionBar?.title = "title"
+        supportActionBar?.title = "MyPokedex"
         initAdapter()
 
         mainViewModel = obtainViewModel(this@MainActivity)
@@ -52,47 +52,14 @@ class MainActivity : AppCompatActivity() {
                         adapter.notifyDataSetChanged()
                         tv_magic_layout.setGone()
                         pg_loading.setGone()
-//                        CoroutineScope(job + Dispatchers.IO).launch {
-//                            updateRemotePokemons().collect { status ->
-//                                Log.d("remotePokemon", status.toString())
-//                                if (!status) {
-//                                    val feedback = Snackbar.make(
-//                                        window.decorView,
-//                                        "Cant Update Pokemon",
-//                                        Snackbar.LENGTH_LONG
-//                                    )
-//                                    feedback.setAction("Try Again") { mainViewModel.loadRemoteTypesPokemon() }
-//                                    feedback.show()
-//                                } else {
-//                                    Snackbar.make(
-//                                        window.decorView,
-//                                        "Data Updated!",
-//                                        Snackbar.LENGTH_LONG
-//                                    ).show()
-//                                }
-//                            }
-//                        }
+                        pg_next_loading.setGone()
+                        Log.d("test22", "${sizeData.toString()} ${isServiceRunning(this@MainActivity,LaunchAppService::class.java)}")
                     } else {
                         getIsDataLoaded().observe(this@MainActivity, Observer {
                             if(!it){
                                 setIsDataLoaded(true)
                                 CoroutineScope(job + Dispatchers.Main).launch{
                                     getCountRemotePokemon()
-
-                                    loadRemoteTypesPokemon().collect {status->
-                                        Log.d("remoteTypes",status.toString())
-                                        if (!status){
-                                            val feedback = Snackbar.make(
-                                                window.decorView,
-                                                "No Internet Connection",
-                                                Snackbar.LENGTH_LONG
-                                            )
-                                            feedback.setAction("Try Again") { mainViewModel.loadRemoteTypesPokemon() }
-                                            feedback.show()
-                                        }else{
-                                            Snackbar.make(window.decorView, "Database TypePokemon Added",Snackbar.LENGTH_LONG).show()
-                                        }
-                                    }
 
                                     loadRemotePokemons2().observe(this@MainActivity, Observer {status->
                                         Log.d("remotePokemon",status.toString())
@@ -105,25 +72,27 @@ class MainActivity : AppCompatActivity() {
                                             feedback.setAction("Try Again") { mainViewModel.loadRemoteTypesPokemon() }
                                             feedback.show()
                                         }else{
-                                            Snackbar.make(window.decorView, "Database List Added",Snackbar.LENGTH_LONG).show()
+                                            Snackbar.make(window.decorView, "Database List start to be added",Snackbar.LENGTH_LONG).show()
                                         }
 
                                     })
 
-//                                    loadRemotePokemons().collect{status->
-//                                        Log.d("remotePokemon",status.toString())
-//                                        if (!status){
-//                                            val feedback = Snackbar.make(
-//                                                window.decorView,
-//                                                "No Internet Connection",
-//                                                Snackbar.LENGTH_LONG
-//                                            )
-//                                            feedback.setAction("Try Again") { mainViewModel.loadRemoteTypesPokemon() }
-//                                            feedback.show()
-//                                        }else{
-//                                            Snackbar.make(window.decorView, "Database List Added",Snackbar.LENGTH_LONG).show()
-//                                        }
-//                                    }
+                                    loadRemoteTypesPokemon().collect {status->
+                                        Log.d("remoteTypes",status.toString())
+                                        if (!status){
+                                            val feedback = Snackbar.make(
+                                                window.decorView,
+                                                "No Internet Connection",
+                                                Snackbar.LENGTH_LONG
+                                            )
+                                            feedback.setAction("Try Again") { mainViewModel.loadRemoteTypesPokemon() }
+                                            feedback.show()
+                                        }else{
+                                            Snackbar.make(window.decorView, "Database TypePokemon start to be add",Snackbar.LENGTH_LONG).show()
+                                        }
+                                    }
+
+
 
                                     //handling result fetching
                                     getFetchBoolean().observe(this@MainActivity, Observer {status->
@@ -158,6 +127,22 @@ class MainActivity : AppCompatActivity() {
         }catch (e:Exception){
             Log.d("tes",e.message.toString())
         }
+
+
+        rv_list_main.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (!recyclerView.canScrollVertically(1)) {
+                    if(isServiceRunning(this@MainActivity, LaunchAppService::class.java)){
+                        pg_next_loading.setShow()
+                        Log.d("pg_main","show")
+                    }
+                }else if(recyclerView.canScrollVertically(1)){
+                    pg_next_loading.setGone()
+                    Log.d("pg_main","gone")
+                }
+            }
+        })
     }
 
     override fun onDestroy() {
@@ -214,7 +199,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId){
             R.id.app_bar_refresh_fetch_pokemon->{
-                Snackbar.make(window.decorView, "Clickeddd",Snackbar.LENGTH_LONG).show()
+                Snackbar.make(window.decorView, "Refresh Clicked",Snackbar.LENGTH_LONG).show()
                 true
             }
             else -> super.onContextItemSelected(item)

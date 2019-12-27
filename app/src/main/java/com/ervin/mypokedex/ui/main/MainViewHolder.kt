@@ -2,6 +2,7 @@ package com.ervin.mypokedex.ui.main
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
@@ -20,10 +21,11 @@ import com.ervin.mypokedex.data.model.SimplePokemonWithTypePojoModel
 import com.ervin.mypokedex.ui.detail.DetailActivity
 
 
-class MainViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class MainViewHolder(view: View, context: Context) : RecyclerView.ViewHolder(view) {
     private val name: TextView = view.findViewById(R.id.pokeName)
     private val picture: ImageView = view.findViewById(R.id.iv_poke_picture)
     private val container: View = view.findViewById(R.id.container_main_item)
+    private val bgDetail: View = (context as Activity).findViewById(R.id.bg_detail)
     private val pokeContainer: View = view.findViewById(R.id.poke_container)
 
     private var simplePokemonItemPojoModel: SimplePokemonWithTypePojoModel? = null
@@ -34,10 +36,12 @@ class MainViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                 val intent = Intent(view.context, DetailActivity::class.java)
                 val pPokePicture =  Pair.create<View,String>(picture,"pokePicture")
                 val pPokeContainer =  Pair.create(pokeContainer,"pokeContainer")
+                val pBgDetail =  Pair.create(bgDetail,"bgDetail")
                 val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                     view.context as Activity,
                     pPokeContainer,
-                    pPokePicture
+                    pPokePicture,
+                    pBgDetail
                 )
                 intent.putExtra("tes",pokemon.pokemonId)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -81,10 +85,10 @@ class MainViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     }
 
     companion object {
-        fun create(parent: ViewGroup): MainViewHolder {
+        fun create(parent: ViewGroup, context: Context): MainViewHolder {
             val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.main_view_item, parent, false)
-            return MainViewHolder(view)
+            return MainViewHolder(view, context)
         }
     }
 }

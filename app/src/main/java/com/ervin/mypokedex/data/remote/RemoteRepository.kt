@@ -1,7 +1,6 @@
 package com.ervin.mypokedex.data.remote
 
 import com.ervin.mypokedex.data.remote.entity.ListAPIPokemonResponse
-import com.ervin.mypokedex.data.remote.entity.PokemonResponse
 
 class RemoteRepository(private val remoteHelper: RemoteHelper){
     companion object{
@@ -10,10 +9,6 @@ class RemoteRepository(private val remoteHelper: RemoteHelper){
         fun getInstance(remoteHelper: RemoteHelper) :RemoteRepository{
             return INSTANCE?: RemoteRepository(remoteHelper)
         }
-    }
-
-    suspend fun loadSimplePokemon(id : String): PokemonResponse {
-        return remoteHelper.getDetailPokemon(id)
     }
 
     suspend fun loadPokemons(offset:Int, limit:Int):ListAPIPokemonResponse{

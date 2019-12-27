@@ -130,7 +130,7 @@ class MainViewModel(private val pokemonRepository: PokemonRepository) : ViewMode
 
     fun getLocalPokemon(pokeName: String): LiveData<Response<PagedList<SimplePokemonWithTypePojoModel>>> {
         val data = MutableLiveData<Response<PagedList<SimplePokemonWithTypePojoModel>>>()
-
+        Log.d("localhere","local")
         return Transformations.switchMap(refreshLocalPokemon(pokeName)) { pagedList ->
             data.value = Response.success(pagedList)
             data
@@ -252,10 +252,10 @@ class MainViewModel(private val pokemonRepository: PokemonRepository) : ViewMode
         withContext(Dispatchers.IO) {
             try {
                 val pokeApi = PokeApiClient()
-                val b = pokeApi.getPokemonList(5, 6)
-                b.results[0].id
+                val b = pokeApi.getPokemonList(0, 6)
                 val species = pokeApi.getPokemonSpecies(2)
-                Log.d("species", "${species.evolvesFromSpecies?.id.toString()} ${species.evolutionChain.id}")
+                Log.d("species", "${species.evolvesFromSpecies?.id.toString()} ${species.evolutionChain.category} ${b.results[0].category}")
+//                val  chain = species.evolutionChain
 //                val evolvechain = pokeApi.getEvolutionChain(1)
 //                val chain = evolvechain.chain.evolvesTo.
             } catch (e: java.lang.Exception) {

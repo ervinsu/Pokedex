@@ -26,4 +26,5 @@ class PokemonModel {
         )
     )
     lateinit var listTypeElementPokemon: List<TypeElementModel>
+//    var listEvolveTo: List<TablePokemonEvolveTo>? = null
 }

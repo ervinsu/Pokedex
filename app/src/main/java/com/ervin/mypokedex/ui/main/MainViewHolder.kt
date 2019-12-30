@@ -7,6 +7,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
+import android.os.SystemClock
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,20 +20,25 @@ import com.bumptech.glide.Glide
 import com.ervin.mypokedex.R
 import com.ervin.mypokedex.data.model.SimplePokemonWithTypePojoModel
 import com.ervin.mypokedex.ui.detail.DetailActivity
+import com.ervin.mypokedex.ui.detail.DetailActivity.Companion.INTENT_POKEMON_ID
 
 
 class MainViewHolder(view: View, context: Context) : RecyclerView.ViewHolder(view) {
     private val name: TextView = view.findViewById(R.id.pokeName)
     private val picture: ImageView = view.findViewById(R.id.iv_poke_picture)
-    private val container: View = view.findViewById(R.id.container_main_item)
     private val bgDetail: View = (context as Activity).findViewById(R.id.bg_detail)
     private val pokeContainer: View = view.findViewById(R.id.poke_container)
+    private var mLastClickTime:Long = 0
 
     private var simplePokemonItemPojoModel: SimplePokemonWithTypePojoModel? = null
 
     init {
         view.setOnClickListener {
             simplePokemonItemPojoModel?.pokemonModel?.let { pokemon ->
+                if(SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return@let
+                }
+                mLastClickTime = SystemClock.elapsedRealtime()
                 val intent = Intent(view.context, DetailActivity::class.java)
                 val pPokePicture =  Pair.create<View,String>(picture,"pokePicture")
                 val pPokeContainer =  Pair.create(pokeContainer,"pokeContainer")
@@ -43,7 +49,7 @@ class MainViewHolder(view: View, context: Context) : RecyclerView.ViewHolder(vie
                     pPokePicture,
                     pBgDetail
                 )
-                intent.putExtra("tes",pokemon.pokemonId)
+                intent.putExtra(INTENT_POKEMON_ID, pokemon.pokemonId)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
                     view.context.startActivity(intent,options.toBundle())
@@ -63,10 +69,10 @@ class MainViewHolder(view: View, context: Context) : RecyclerView.ViewHolder(vie
         }
     }
 
-    @SuppressLint("ResourceType")
+    @SuppressLint("ResourceType", "DefaultLocale")
     private fun showRepoData(simplePokemonItemPojoModel: SimplePokemonWithTypePojoModel) {
         this.simplePokemonItemPojoModel = simplePokemonItemPojoModel
-        name.text = simplePokemonItemPojoModel.pokemonModel.pokemonName
+        name.text = simplePokemonItemPojoModel.pokemonModel.pokemonName.capitalize()
         Glide.with(picture.context)
             .load(simplePokemonItemPojoModel.pokemonModel.pokemonSpritesUrl)
             .into(picture)

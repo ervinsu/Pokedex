@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.ervin.mypokedex.data.PokemonRepository
 import com.ervin.mypokedex.di.Injection
+import com.ervin.mypokedex.ui.detail.DetailViewModel
 import com.ervin.mypokedex.ui.main.MainViewModel
 
 @Suppress("UNCHECKED_CAST")
@@ -28,6 +29,8 @@ class ViewModelFactory(repository: PokemonRepository): ViewModelProvider.NewInst
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if(modelClass.isAssignableFrom(MainViewModel::class.java)){
             return MainViewModel(pokemonRepository) as T
+        }else if(modelClass.isAssignableFrom(DetailViewModel::class.java)){
+            return DetailViewModel(pokemonRepository) as T
         }
         return super.create(modelClass)
     }

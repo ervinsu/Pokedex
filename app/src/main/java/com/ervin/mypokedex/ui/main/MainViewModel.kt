@@ -189,6 +189,7 @@ class MainViewModel(private val pokemonRepository: PokemonRepository) : ViewMode
                     )
                     withContext(Dispatchers.IO) {
                         val typePokemonRemote = pokeApi.getType(typeElementId)
+
                         typePokemonRemote.damageRelations.doubleDamageTo.forEach { doubleDamage ->
                             superEffectiveListTo.add(
                                 TypeElementSuperEffectiveEntity(

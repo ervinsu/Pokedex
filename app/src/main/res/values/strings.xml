@@ -16,4 +16,5 @@
     <string name="height">Height:</string>
     <string name="weight">Weight:</string>
     <string name="profile">Profile</string>
+    <string name="damageAttacked">Damage When Attacked</string>
 </resources>

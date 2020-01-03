@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
+import android.view.View
 import androidx.lifecycle.*
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.paging.PagedList
@@ -33,6 +34,7 @@ class MainViewModel(private val pokemonRepository: PokemonRepository) : ViewMode
     private var countPokemon = MutableLiveData<Int>()
     private val booleanFetch = MutableLiveData<Boolean>()
     private val isDataLoaded = MutableLiveData<Boolean>(false)
+    var rootView = MutableLiveData<View>()
 
     private val mMessageReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {

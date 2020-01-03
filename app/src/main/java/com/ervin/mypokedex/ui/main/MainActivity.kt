@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity() {
                                                 Snackbar.LENGTH_LONG
                                             )
                                             feedback.setAction("Try Again") {
-                                                mainViewModel.loadRemotePokemons()
+                                                mainViewModel.loadRemotePokemons2()
                                                 mainViewModel.loadRemoteTypesPokemon() }
                                             feedback.show()
                                         }

@@ -23,7 +23,7 @@ import com.ervin.mypokedex.ui.detail.DetailActivity
 import com.ervin.mypokedex.ui.detail.DetailActivity.Companion.INTENT_POKEMON_ID
 
 
-class MainViewHolder(view: View, context: Context) : RecyclerView.ViewHolder(view) {
+class MainViewHolder(view: View, private val context: Context) : RecyclerView.ViewHolder(view) {
     private val name: TextView = view.findViewById(R.id.pokeName)
     private val picture: ImageView = view.findViewById(R.id.iv_poke_picture)
     private val bgDetail: View = (context as Activity).findViewById(R.id.bg_detail)
@@ -73,7 +73,7 @@ class MainViewHolder(view: View, context: Context) : RecyclerView.ViewHolder(vie
     private fun showRepoData(simplePokemonItemPojoModel: SimplePokemonWithTypePojoModel) {
         this.simplePokemonItemPojoModel = simplePokemonItemPojoModel
         name.text = simplePokemonItemPojoModel.pokemonModel.pokemonName.capitalize()
-        Glide.with(picture.context)
+        Glide.with(context)
             .load(simplePokemonItemPojoModel.pokemonModel.pokemonSpritesUrl)
             .into(picture)
         val arrayColorTypes = IntArray(2)

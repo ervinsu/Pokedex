@@ -2,7 +2,15 @@ package com.ervin.mypokedex.data.local
 
 import androidx.paging.DataSource
 import androidx.room.*
-import com.ervin.mypokedex.data.local.entity.*
+import com.ervin.mypokedex.data.local.entity.PokemonEntity
+import com.ervin.mypokedex.data.local.entity.PokemonTypeElementEntity
+import com.ervin.mypokedex.data.local.entity.type.TypeElementEntity
+import com.ervin.mypokedex.data.local.entity.type.effective.TypeElementSuperEffectiveEntityFrom
+import com.ervin.mypokedex.data.local.entity.type.effective.TypeElementSuperEffectiveEntityTo
+import com.ervin.mypokedex.data.local.entity.type.halfeffective.TypeElementNotEffectiveEntityFrom
+import com.ervin.mypokedex.data.local.entity.type.halfeffective.TypeElementNotEffectiveEntityTo
+import com.ervin.mypokedex.data.local.entity.type.nodamage.TypeElementNoDamageEntityFrom
+import com.ervin.mypokedex.data.local.entity.type.nodamage.TypeElementNoDamageEntityTo
 import com.ervin.mypokedex.data.model.PokemonModel
 import com.ervin.mypokedex.data.model.SimplePokemonWithTypePojoModel
 import com.ervin.mypokedex.data.model.TypeElementModel
@@ -12,25 +20,42 @@ interface PokemonDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllPokemon(pokemons: List<PokemonEntity>)
 
+    
+    //insert type
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllTypeElement(types: List<TypeElementEntity>)
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAllTypeElementSuperEffective(types: List<TypeElementSuperEffectiveEntity>)
+    suspend fun insertAllTypeElementSuperEffectiveTo(listSuperEffectiveTo: List<TypeElementSuperEffectiveEntityTo>)
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAllTypeElementNotEffective(types: List<TypeElementNotEffectiveEntity>)
+    suspend fun insertAllTypeElementNotEffectiveTo(listNotEffectiveTo: List<TypeElementNotEffectiveEntityTo>)
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAllTypeElementNoDamage(types: List<TypeElementNoDamageEntity>)
+    suspend fun insertAllTypeElementNoDamageTo(listNoDamageTo: List<TypeElementNoDamageEntityTo>)
+
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllTypeElementSuperEffectiveFrom(listSuperEffectiveFrom: List<TypeElementSuperEffectiveEntityFrom>)
+
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllTypeElementNotEffectiveFrom(listNotEffectiveFrom: List<TypeElementNotEffectiveEntityFrom>)
+
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllTypeElementNoDamageFrom(listNoDamageFrom: List<TypeElementNoDamageEntityFrom>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCompositePokemonType(pokemonWithTypes: List<PokemonTypeElementEntity>)
 
+    
+    
+    
     @Transaction
     @Query("SELECT pokemonId, pokemonName, pokemonSpritesUrl from PokemonTable WHERE pokemonName like '%' ||:pokeName || '%'")
     fun getPokemonWithType(pokeName: String): DataSource.Factory<Int, SimplePokemonWithTypePojoModel>

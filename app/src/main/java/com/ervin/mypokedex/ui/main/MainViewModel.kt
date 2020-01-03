@@ -10,10 +10,13 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.paging.PagedList
 import com.ervin.mypokedex.App
 import com.ervin.mypokedex.data.PokemonRepository
-import com.ervin.mypokedex.data.local.entity.TypeElementEntity
-import com.ervin.mypokedex.data.local.entity.TypeElementNoDamageEntity
-import com.ervin.mypokedex.data.local.entity.TypeElementNotEffectiveEntity
-import com.ervin.mypokedex.data.local.entity.TypeElementSuperEffectiveEntity
+import com.ervin.mypokedex.data.local.entity.type.TypeElementEntity
+import com.ervin.mypokedex.data.local.entity.type.effective.TypeElementSuperEffectiveEntityFrom
+import com.ervin.mypokedex.data.local.entity.type.effective.TypeElementSuperEffectiveEntityTo
+import com.ervin.mypokedex.data.local.entity.type.halfeffective.TypeElementNotEffectiveEntityFrom
+import com.ervin.mypokedex.data.local.entity.type.halfeffective.TypeElementNotEffectiveEntityTo
+import com.ervin.mypokedex.data.local.entity.type.nodamage.TypeElementNoDamageEntityFrom
+import com.ervin.mypokedex.data.local.entity.type.nodamage.TypeElementNoDamageEntityTo
 import com.ervin.mypokedex.data.model.SimplePokemonWithTypePojoModel
 import com.ervin.mypokedex.service.LaunchAppService.Companion.INTENT_FILTER_SERVICE_GET_POKEMON
 import com.ervin.mypokedex.service.LaunchAppService.Companion.RESULT_FETCHING_POKEMON
@@ -76,29 +79,15 @@ class MainViewModel(private val pokemonRepository: PokemonRepository) : ViewMode
         return countPokemon
     }
 
-    suspend fun getCountLocalPokemon(): Int {
-        return pokemonRepository.getLocalCountPokemon()
-    }
-
-    fun loadRemotePokemons1(): LiveData<Response<PagedList<SimplePokemonWithTypePojoModel>>> {
-//        pokemonRepository.isPokemonAvailable(55)
-        val data = MutableLiveData<Response<PagedList<SimplePokemonWithTypePojoModel>>>()
-
-        return Transformations.switchMap(refreshLocalPokemon("")) { pagedList ->
-            data.value = Response.success(pagedList)
-            data
-        }
-    }
-
-    fun loadRemotePokemons(): Flow<Boolean> = flow {
-        val returned: Boolean = try {
-            pokemonRepository.isPokemonAvailable(52)
-            true
-        } catch (e: java.lang.Exception) {
-            false
-        }
-        emit(returned)
-    }
+//    fun loadRemotePokemons(): Flow<Boolean> = flow {
+//        val returned: Boolean = try {
+//            pokemonRepository.isPokemonAvailable(52)
+//            true
+//        } catch (e: java.lang.Exception) {
+//            false
+//        }
+//        emit(returned)
+//    }
 
 
     fun loadRemotePokemons2(): LiveData<Boolean> = Transformations.switchMap(countPokemon){count->
@@ -114,15 +103,15 @@ class MainViewModel(private val pokemonRepository: PokemonRepository) : ViewMode
         }
     }
 
-    fun updateRemotePokemons(): Flow<Boolean> = flow {
-        val returned: Boolean = try {
-            pokemonRepository.isPokemonAvailable(252)
-            true
-        } catch (e: java.lang.Exception) {
-            false
-        }
-        emit(returned)
-    }
+//    fun updateRemotePokemons(): Flow<Boolean> = flow {
+//        val returned: Boolean = try {
+//            pokemonRepository.isPokemonAvailable(252)
+//            true
+//        } catch (e: java.lang.Exception) {
+//            false
+//        }
+//        emit(returned)
+//    }
 
     private fun refreshLocalPokemon(pokeName: String): LiveData<PagedList<SimplePokemonWithTypePojoModel>> {
         return pokemonRepository.getLocalPokemon(pokeName)
@@ -130,7 +119,7 @@ class MainViewModel(private val pokemonRepository: PokemonRepository) : ViewMode
 
     fun getLocalPokemon(pokeName: String): LiveData<Response<PagedList<SimplePokemonWithTypePojoModel>>> {
         val data = MutableLiveData<Response<PagedList<SimplePokemonWithTypePojoModel>>>()
-        Log.d("localhere","local")
+//        Log.d("localhere","local")
         return Transformations.switchMap(refreshLocalPokemon(pokeName)) { pagedList ->
             data.value = Response.success(pagedList)
             data
@@ -152,9 +141,12 @@ class MainViewModel(private val pokemonRepository: PokemonRepository) : ViewMode
                 val elementEntities: MutableList<TypeElementEntity> = ArrayList()
                 val pokeTypes = pokemonRepository.getRemotePokemonTypes().listResponseAPI
                 val pokeApi = PokeApiClient()
-                val superEffectiveListTo: MutableList<TypeElementSuperEffectiveEntity> = ArrayList()
-                val notEffectiveListTo: MutableList<TypeElementNotEffectiveEntity> = ArrayList()
-                val noDamageListTo: MutableList<TypeElementNoDamageEntity> = ArrayList()
+                val superEffectiveListTo: MutableList<TypeElementSuperEffectiveEntityTo> = ArrayList()
+                val notEffectiveListTo: MutableList<TypeElementNotEffectiveEntityTo> = ArrayList()
+                val noDamageListTo: MutableList<TypeElementNoDamageEntityTo> = ArrayList()
+                val superEffectiveListFrom: MutableList<TypeElementSuperEffectiveEntityFrom> = ArrayList()
+                val notEffectiveListFrom: MutableList<TypeElementNotEffectiveEntityFrom> = ArrayList()
+                val noDamageListFrom: MutableList<TypeElementNoDamageEntityFrom> = ArrayList()
 
                 pokeTypes.forEach { type ->
                     val color = when (type.nameResponse) {
@@ -190,29 +182,56 @@ class MainViewModel(private val pokemonRepository: PokemonRepository) : ViewMode
                     withContext(Dispatchers.IO) {
                         val typePokemonRemote = pokeApi.getType(typeElementId)
 
-                        typePokemonRemote.damageRelations.doubleDamageTo.forEach { doubleDamage ->
+                        typePokemonRemote.damageRelations.doubleDamageTo.forEach { doubleDamageTo ->
                             superEffectiveListTo.add(
-                                TypeElementSuperEffectiveEntity(
+                                TypeElementSuperEffectiveEntityTo(
                                     typeElementId,
-                                    doubleDamage.id
+                                    doubleDamageTo.id
                                 )
                             )
                         }
 
-                        typePokemonRemote.damageRelations.halfDamageTo.forEach { halfDamage ->
+                        typePokemonRemote.damageRelations.halfDamageTo.forEach { halfDamageTo ->
                             notEffectiveListTo.add(
-                                TypeElementNotEffectiveEntity(
+                                TypeElementNotEffectiveEntityTo(
                                     typeElementId,
-                                    halfDamage.id
+                                    halfDamageTo.id
                                 )
                             )
                         }
 
-                        typePokemonRemote.damageRelations.noDamageTo.forEach { noDamage ->
+                        typePokemonRemote.damageRelations.noDamageTo.forEach { noDamageTo ->
                             noDamageListTo.add(
-                                TypeElementNoDamageEntity(
+                                TypeElementNoDamageEntityTo(
                                     typeElementId,
-                                    noDamage.id
+                                    noDamageTo.id
+                                )
+                            )
+                        }
+
+                        typePokemonRemote.damageRelations.doubleDamageFrom.forEach { doubleDamageFrom->
+                            superEffectiveListFrom.add(
+                                TypeElementSuperEffectiveEntityFrom(
+                                    typeElementId,
+                                    doubleDamageFrom.id
+                                )
+                            )
+                        }
+
+                        typePokemonRemote.damageRelations.halfDamageFrom.forEach { halfDamageFrom->
+                            notEffectiveListFrom.add(
+                                TypeElementNotEffectiveEntityFrom(
+                                    typeElementId,
+                                    halfDamageFrom.id
+                                )
+                            )
+                        }
+
+                        typePokemonRemote.damageRelations.noDamageFrom.forEach { noDamageFrom->
+                            noDamageListFrom.add(
+                                TypeElementNoDamageEntityFrom(
+                                    typeElementId,
+                                    noDamageFrom.id
                                 )
                             )
                         }
@@ -226,7 +245,10 @@ class MainViewModel(private val pokemonRepository: PokemonRepository) : ViewMode
                     elementEntities,
                     superEffectiveListTo,
                     notEffectiveListTo,
-                    noDamageListTo
+                    noDamageListTo,
+                    superEffectiveListFrom,
+                    notEffectiveListFrom,
+                    noDamageListFrom
                 )
                 returned = true
             } catch (e: java.lang.Exception) {

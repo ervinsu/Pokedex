@@ -1,7 +1,15 @@
 package com.ervin.mypokedex.data.local
 
 import androidx.paging.DataSource
-import com.ervin.mypokedex.data.local.entity.*
+import com.ervin.mypokedex.data.local.entity.PokemonEntity
+import com.ervin.mypokedex.data.local.entity.PokemonTypeElementEntity
+import com.ervin.mypokedex.data.local.entity.type.TypeElementEntity
+import com.ervin.mypokedex.data.local.entity.type.effective.TypeElementSuperEffectiveEntityFrom
+import com.ervin.mypokedex.data.local.entity.type.effective.TypeElementSuperEffectiveEntityTo
+import com.ervin.mypokedex.data.local.entity.type.halfeffective.TypeElementNotEffectiveEntityFrom
+import com.ervin.mypokedex.data.local.entity.type.halfeffective.TypeElementNotEffectiveEntityTo
+import com.ervin.mypokedex.data.local.entity.type.nodamage.TypeElementNoDamageEntityFrom
+import com.ervin.mypokedex.data.local.entity.type.nodamage.TypeElementNoDamageEntityTo
 import com.ervin.mypokedex.data.model.PokemonModel
 import com.ervin.mypokedex.data.model.SimplePokemonWithTypePojoModel
 import com.ervin.mypokedex.data.model.TypeElementModel
@@ -17,14 +25,20 @@ class LocalRepository(private val dao: PokemonDao) {
 
     suspend fun insertPokemonType(
         data: List<TypeElementEntity>,
-        listTypeEffective: List<TypeElementSuperEffectiveEntity>,
-        listTypeNotEffective: List<TypeElementNotEffectiveEntity>,
-        listTypeNoDamage: List<TypeElementNoDamageEntity>
+        listTypeEffectiveTo: List<TypeElementSuperEffectiveEntityTo>,
+        listTypeNotEffectiveTo: List<TypeElementNotEffectiveEntityTo>,
+        listTypeNoDamageTo: List<TypeElementNoDamageEntityTo>,
+        listTypeEffectiveFrom: List<TypeElementSuperEffectiveEntityFrom>,
+        listTypeNotEffectiveFrom: List<TypeElementNotEffectiveEntityFrom>,
+        listTypeNoDamageFrom: List<TypeElementNoDamageEntityFrom>
     ) {
         dao.insertAllTypeElement(data)
-        dao.insertAllTypeElementSuperEffective(listTypeEffective)
-        dao.insertAllTypeElementNotEffective(listTypeNotEffective)
-        dao.insertAllTypeElementNoDamage(listTypeNoDamage)
+        dao.insertAllTypeElementSuperEffectiveTo(listTypeEffectiveTo)
+        dao.insertAllTypeElementNotEffectiveTo(listTypeNotEffectiveTo)
+        dao.insertAllTypeElementNoDamageTo(listTypeNoDamageTo)
+        dao.insertAllTypeElementSuperEffectiveFrom(listTypeEffectiveFrom)
+        dao.insertAllTypeElementNotEffectiveFrom(listTypeNotEffectiveFrom)
+        dao.insertAllTypeElementNoDamageFrom(listTypeNoDamageFrom)
     }
 
     suspend fun insertPokemon(data: List<PokemonEntity>) {

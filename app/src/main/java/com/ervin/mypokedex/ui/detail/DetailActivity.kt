@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.transition.Fade
+import android.util.Log
 import android.view.Window
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
@@ -24,7 +25,9 @@ import kotlinx.coroutines.launch
 class DetailActivity : AppCompatActivity() {
 
     private val job = Job()
-    private val listDetailType: MutableList<DetailTypeAdapter.PokemonTypeWeaknessFrom> = arrayListOf()
+    private val listDetailType : MutableList<DetailTypeAdapter.PokemonTypeWeaknessFrom> = arrayListOf()
+    val map = mutableMapOf<String,DetailTypeAdapter.PokemonTypeWeaknessFrom>()
+
     private val detailViewModel: DetailViewModel by lazy {
         val factory: ViewModelFactory = ViewModelFactory.getInstance(this@DetailActivity.application)
         return@lazy ViewModelProvider(this@DetailActivity, factory).get(DetailViewModel::class.java)
@@ -64,30 +67,58 @@ class DetailActivity : AppCompatActivity() {
                         val window: Window = window
                         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                         window.statusBarColor = Color.parseColor(pokemonModel.listTypeElementPokemon[0].typeEntity.typeColor)
-                        val map = mutableMapOf<String,String>()
-                        for (i in pokemonModel.listTypeElementPokemon.indices){
-                            val type = pokemonModel.listTypeElementPokemon[i]
+                    }
 
-                            for(j in type.typeSuperEffectiveEntity.indices){
-                                val currType = type.typeSuperEffectiveEntity[j]
-                                map[currType.typeName] = "a"
-                                listDetailType.add(DetailTypeAdapter.PokemonTypeWeaknessFrom(0, currType.typeName, currType.typeColor))
-                            }
-                            for(j in type.typeNotSuperEffectiveEntity.indices){
-                                val currType = type.typeNotSuperEffectiveEntity[j]
-                                listDetailType.add(DetailTypeAdapter.PokemonTypeWeaknessFrom(1, currType.typeName, currType.typeColor))
-                            }
-                            for(j in type.typeNoDamageEntity.indices){
-                                val currType = type.typeNoDamageEntity[j]
-                                listDetailType.add(DetailTypeAdapter.PokemonTypeWeaknessFrom(2, currType.typeName, currType.typeColor))
-                            }
+                    for (i in pokemonModel.listTypeElementPokemon.indices){
+                        val type = pokemonModel.listTypeElementPokemon[i]
+
+                        for (k in type.typeSuperEffectiveEntityFrom.indices){
+                            val currType = type.typeSuperEffectiveEntityFrom[k]
+                            Log.d("supereffectve", "${currType.typeName} ${type.typeEntity.typeName}")
+                            if(map.containsKey(currType.typeName))
+                                map[currType.typeName] = DetailTypeAdapter.PokemonTypeWeaknessFrom(
+                                    (map[currType.typeName]!!.typeElementWeaknessMultiply) * 2f, currType.typeColor)
+                            else
+                                map[currType.typeName] = DetailTypeAdapter.PokemonTypeWeaknessFrom(2f, currType.typeColor)
                         }
 
-                        detailTypeAdapter.notifyDataSetChanged()
+                        for (k in type.typeNotSuperEffectiveEntityFrom.indices){
+                            val currType = type.typeNotSuperEffectiveEntityFrom[k]
+                            Log.d("noteffective", "${currType.typeName} ${type.typeEntity.typeName}")
+                            if(map.containsKey(currType.typeName))
+                                map[currType.typeName] = DetailTypeAdapter.PokemonTypeWeaknessFrom(
+                                    (map[currType.typeName]!!.typeElementWeaknessMultiply) * 0.5f, currType.typeColor)
+                            else
+                                map[currType.typeName] = DetailTypeAdapter.PokemonTypeWeaknessFrom(0.5f, currType.typeColor)
+                        }
 
+                        for (k in type.typeNoDamageEntityFrom.indices){
+                            val currType = type.typeNoDamageEntityFrom[k]
+                            Log.d("no_dmg", "${currType.typeName} ${type.typeEntity.typeName}")
+                            if(map.containsKey(currType.typeName))
+                                map[currType.typeName] = DetailTypeAdapter.PokemonTypeWeaknessFrom(
+                                    (map[currType.typeName]!!.typeElementWeaknessMultiply) * 0f, currType.typeColor)
+                            else
+                                map[currType.typeName] = DetailTypeAdapter.PokemonTypeWeaknessFrom(0f, currType.typeColor)
+                        }
                     }
+                    Log.d("before_sor ted", "${map.size} ")
+                    val sortedMap = map.toSortedMap(compareByDescending<String>{map[it]?.typeElementWeaknessMultiply}.thenBy { map[it]?.typeColor })
+                    Log.d("after_sorted", "${sortedMap.size} ")
+                    listDetailType.addAll(convertMapKey(sortedMap))
+                    detailTypeAdapter.notifyDataSetChanged()
                 }
             }
         }
+    }
+
+    private fun convertMapKey(map : Map<String, DetailTypeAdapter.PokemonTypeWeaknessFrom>):List<DetailTypeAdapter.PokemonTypeWeaknessFrom>{
+        val listDetailType: MutableList<DetailTypeAdapter.PokemonTypeWeaknessFrom> = arrayListOf()
+        for ((key,value) in map){
+            value.typeName = key
+            listDetailType.add(value)
+        }
+//        val sortedList = listDetailType.sortedWith(compareByDescending {  })
+        return listDetailType
     }
 }

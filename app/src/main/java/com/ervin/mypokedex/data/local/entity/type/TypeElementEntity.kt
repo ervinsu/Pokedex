@@ -1,4 +1,4 @@
-package com.ervin.mypokedex.data.local.entity
+package com.ervin.mypokedex.data.local.entity.type
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

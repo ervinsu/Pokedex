@@ -38,30 +38,56 @@ class TablePokemonTypeElement {
 }
 
 
-class TableTypeSuperElementEffective{
+class TableTypeElementSuperEffectiveTo{
     companion object{
         const val TypeID: String ="typeClassId"
-        const val TypeSuperEffectiveTable: String ="TypeEffectiveTable"
-        const val TypeIDSuperEffective: String ="typeIDEffectiveTo"
+        const val TypeSuperEffectiveTableTo: String ="TypeEffectiveTableTo"
+        const val TypeIDSuperEffectiveTo: String ="typeIDEffectiveTo"
     }
 }
 
 
-class TableTypeElementNotEffective{
-    companion object{
-        const val TypeID: String ="typeClassId"
-        const val TypeNotEffectiveTable: String ="TypeNotEffectiveTable"
-        const val TypeIDNotEffective: String ="typeIDNotEffectiveTo"
+class TableTypeElementNotEffectiveTo {
+    companion object {
+        const val TypeID: String = "typeClassId"
+        const val TypeNotEffectiveTableTo: String = "TypeNotEffectiveTableTo"
+        const val TypeIDNotEffectiveTo: String = "typeIDNotEffectiveTo"
     }
 }
 
-class TableTypeElementNoDamage{
+class TableTypeElementNoDamageTo{
     companion object{
         const val TypeID: String ="typeClassId"
-        const val TypeNoDamageTable: String ="typeNoDamageTable"
-        const val TypeIDNoDamage: String ="typeIDNoDamageTo"
+        const val TypeNoDamageTableTo: String ="typeNoDamageTableTo"
+        const val TypeIDNoDamageTo: String ="typeIDNoDamageTo"
     }
 }
+
+class TableTypeElementNoDamageFrom{
+    companion object{
+        const val TypeID: String ="typeClassId"
+        const val TypeNoDamageTableFrom: String ="typeNoDamageTableFrom"
+        const val TypeIDNoDamageFrom: String ="typeIDNoDamageFrom"
+    }
+}
+
+class TableTypeElementSuperEffectiveFrom{
+    companion object{
+        const val TypeID: String ="typeClassId"
+        const val TypeSuperEffectiveTableFrom: String ="TypeEffectiveTableFrom"
+        const val TypeIDSuperEffectiveFrom: String ="typeIDEffectiveFrom"
+    }
+}
+
+
+class TableTypeElementNotEffectiveFrom{
+    companion object{
+        const val TypeID: String ="typeClassId"
+        const val TypeNotEffectiveTableFrom: String ="TypeNotEffectiveTableFrom"
+        const val TypeIDNotEffectiveFrom: String ="typeIDNotEffectiveFrom"
+    }
+}
+
 
 class TablePokemonEvolveTo{
    companion object{

@@ -24,15 +24,11 @@ class DetailTypeAdapter(private val listType: List<PokemonTypeWeaknessFrom>): Re
 
     @SuppressLint("SetTextI18n", "DefaultLocale")
     override fun onBindViewHolder(holder: DetailViewHolder, position: Int) {
-        val curType = listType[position]
-        when (curType.typeAttack) {
-            0 -> holder.itemView.tv_multiply_effective.text = "2x"
-            1 -> holder.itemView.tv_multiply_effective.text = "0.5x"
-            2 -> holder.itemView.tv_multiply_effective.text = "0.25x"
-        }
-        holder.itemView.tv_type_name.text = curType.typeElementWeaknessFrom.capitalize()
+        val currType = listType[position]
+        holder.itemView.tv_multiply_effective.text = "${currType.typeElementWeaknessMultiply} x"
+        holder.itemView.tv_type_name.text = currType.typeName?.capitalize()
         val gradient = GradientDrawable().apply {
-            setColor(Color.parseColor(curType.typeColor))
+            setColor(Color.parseColor(currType.typeColor))
             cornerRadius = 8f
             setStroke(3, ContextCompat.getColor(App().getContext(), R.color.darkGrey))
         }
@@ -41,8 +37,8 @@ class DetailTypeAdapter(private val listType: List<PokemonTypeWeaknessFrom>): Re
 
     class DetailViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     data class PokemonTypeWeaknessFrom(
-        val typeAttack: Int,
-        val typeElementWeaknessFrom: String,
-        val typeColor: String
+        val typeElementWeaknessMultiply: Float,
+        val typeColor: String,
+        var typeName : String? = ""
     )
 }

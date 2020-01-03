@@ -8,7 +8,15 @@ import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.ervin.mypokedex.App
 import com.ervin.mypokedex.data.local.LocalRepository
-import com.ervin.mypokedex.data.local.entity.*
+import com.ervin.mypokedex.data.local.entity.PokemonEntity
+import com.ervin.mypokedex.data.local.entity.PokemonTypeElementEntity
+import com.ervin.mypokedex.data.local.entity.type.TypeElementEntity
+import com.ervin.mypokedex.data.local.entity.type.effective.TypeElementSuperEffectiveEntityFrom
+import com.ervin.mypokedex.data.local.entity.type.effective.TypeElementSuperEffectiveEntityTo
+import com.ervin.mypokedex.data.local.entity.type.halfeffective.TypeElementNotEffectiveEntityFrom
+import com.ervin.mypokedex.data.local.entity.type.halfeffective.TypeElementNotEffectiveEntityTo
+import com.ervin.mypokedex.data.local.entity.type.nodamage.TypeElementNoDamageEntityFrom
+import com.ervin.mypokedex.data.local.entity.type.nodamage.TypeElementNoDamageEntityTo
 import com.ervin.mypokedex.data.model.PokemonModel
 import com.ervin.mypokedex.data.model.SimplePokemonWithTypePojoModel
 import com.ervin.mypokedex.data.model.TypeElementModel
@@ -49,15 +57,21 @@ class PokemonRepository(
 
     suspend fun saveLocalTypes(
         listType: List<TypeElementEntity>,
-        listTypeEffective: List<TypeElementSuperEffectiveEntity>,
-        listTypeNotEffective: List<TypeElementNotEffectiveEntity>,
-        listTypeNoDamage: List<TypeElementNoDamageEntity>
-    ) {
+        listTypeEffectiveTo: List<TypeElementSuperEffectiveEntityTo>,
+        listTypeNotEffectiveTo: List<TypeElementNotEffectiveEntityTo>,
+        listTypeNoDamageTo: List<TypeElementNoDamageEntityTo>,
+        listTypeEffectiveFrom: List<TypeElementSuperEffectiveEntityFrom>,
+        listTypeNotEffectiveFrom: List<TypeElementNotEffectiveEntityFrom>,
+        listTypeNoDamageFrom: List<TypeElementNoDamageEntityFrom>
+        ) {
         localRepository.insertPokemonType(
             listType,
-            listTypeEffective,
-            listTypeNotEffective,
-            listTypeNoDamage
+            listTypeEffectiveTo,
+            listTypeNotEffectiveTo,
+            listTypeNoDamageTo,
+            listTypeEffectiveFrom,
+            listTypeNotEffectiveFrom,
+            listTypeNoDamageFrom
         )
     }
 

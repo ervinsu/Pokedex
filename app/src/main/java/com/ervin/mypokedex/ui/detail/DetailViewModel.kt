@@ -42,8 +42,8 @@ class DetailViewModel(private val pokemonRepository: PokemonRepository) :ViewMod
         for (i in pokemonModel.listTypeElementPokemon.indices) {
             arrayColor[i] = Color.parseColor(pokemonModel.listTypeElementPokemon[i].typeEntity.typeColor)
 
-            when {
-                i==0 -> {
+            when (i) {
+                0 -> {
                     pokemonElement1.value =
                         pokemonModel.listTypeElementPokemon[0].typeEntity.typeName.capitalize()
                     val gradient = GradientDrawable().apply {
@@ -52,10 +52,9 @@ class DetailViewModel(private val pokemonRepository: PokemonRepository) :ViewMod
                         setStroke(3, ContextCompat.getColor(App().getContext(), R.color.darkGrey))
                     }
                     gradientElement1.value = gradient
-                }
-                pokemonModel.listTypeElementPokemon.size == 1 -> {
                     isType2Available.value = false
-                    arrayColor[1] = Color.parseColor(pokemonModel.listTypeElementPokemon[0].typeEntity.typeColor)
+                    if(pokemonModel.listTypeElementPokemon.size == 1)
+                        arrayColor[1] = Color.parseColor(pokemonModel.listTypeElementPokemon[0].typeEntity.typeColor)
                 }
                 else -> {
                     isType2Available.value = true

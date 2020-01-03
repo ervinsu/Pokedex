@@ -4,17 +4,28 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.ervin.mypokedex.data.local.entity.*
+import com.ervin.mypokedex.data.local.entity.PokemonEntity
+import com.ervin.mypokedex.data.local.entity.PokemonTypeElementEntity
+import com.ervin.mypokedex.data.local.entity.type.TypeElementEntity
+import com.ervin.mypokedex.data.local.entity.type.effective.TypeElementSuperEffectiveEntityFrom
+import com.ervin.mypokedex.data.local.entity.type.effective.TypeElementSuperEffectiveEntityTo
+import com.ervin.mypokedex.data.local.entity.type.halfeffective.TypeElementNotEffectiveEntityFrom
+import com.ervin.mypokedex.data.local.entity.type.halfeffective.TypeElementNotEffectiveEntityTo
+import com.ervin.mypokedex.data.local.entity.type.nodamage.TypeElementNoDamageEntityFrom
+import com.ervin.mypokedex.data.local.entity.type.nodamage.TypeElementNoDamageEntityTo
 
 @Database(
     entities = [PokemonEntity::class,
         PokemonTypeElementEntity::class,
         TypeElementEntity::class,
-        TypeElementSuperEffectiveEntity::class,
-        TypeElementNotEffectiveEntity::class,
-        TypeElementNoDamageEntity::class
+        TypeElementSuperEffectiveEntityTo::class,
+        TypeElementNotEffectiveEntityTo::class,
+        TypeElementNoDamageEntityTo::class,
+        TypeElementSuperEffectiveEntityFrom::class,
+        TypeElementNotEffectiveEntityFrom::class,
+        TypeElementNoDamageEntityFrom::class
     ]
-    , version = 2
+    , version = 4
     , exportSchema = false
 )
 abstract class PokemonDatabase : RoomDatabase() {

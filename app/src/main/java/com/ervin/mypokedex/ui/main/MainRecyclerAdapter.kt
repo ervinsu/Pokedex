@@ -16,10 +16,8 @@ class MainRecyclerAdapter(val context: Context):PagedListAdapter<SimplePokemonWi
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val pokemon = getItem(position)
-        if(pokemon!=null){
-            (holder as MainViewHolder).bind(pokemon)
-        }
+        val pokemon = getItem(position)?:return
+        (holder as MainViewHolder).bind(pokemon)
     }
 
     companion object{

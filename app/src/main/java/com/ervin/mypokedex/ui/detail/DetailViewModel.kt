@@ -49,7 +49,7 @@ class DetailViewModel(private val pokemonRepository: PokemonRepository) :ViewMod
                     val gradient = GradientDrawable().apply {
                         setColor(Color.parseColor(pokemonModel.listTypeElementPokemon[0].typeEntity.typeColor))
                         cornerRadius = 8f
-                        setStroke(3, ContextCompat.getColor(App().getContext(), R.color.darkGrey))
+                        setStroke(3, ContextCompat.getColor(App().getContext(), R.color.detailDark))
                     }
                     gradientElement1.value = gradient
                     isType2Available.value = false
@@ -62,7 +62,7 @@ class DetailViewModel(private val pokemonRepository: PokemonRepository) :ViewMod
                     val gradient = GradientDrawable().apply {
                         setColor(Color.parseColor(pokemonModel.listTypeElementPokemon[i].typeEntity.typeColor))
                         cornerRadius = 8f
-                        setStroke(3, ContextCompat.getColor(App().getContext(), R.color.darkGrey))
+                        setStroke(3, ContextCompat.getColor(App().getContext(), R.color.detailDark))
                     }
                     gradientElement2.value = gradient
                 }

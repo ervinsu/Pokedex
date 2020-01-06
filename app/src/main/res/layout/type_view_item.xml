@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="@dimen/width_row"
     android:layout_height="wrap_content"
-    app:cardBackgroundColor="@color/grey"
+    app:cardBackgroundColor="@color/detailAccent"
     android:background="@drawable/not_pointed_background"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -16,7 +16,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:textSize="18sp"
-            android:textColor="@color/white"
+            android:textColor="@color/whiteBlack"
             android:textAlignment="textStart"
             tools:text="Type"
             android:padding="4sp"

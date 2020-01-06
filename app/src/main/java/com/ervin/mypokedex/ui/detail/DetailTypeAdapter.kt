@@ -30,7 +30,7 @@ class DetailTypeAdapter(private val listType: List<PokemonTypeWeaknessFrom>): Re
         val gradient = GradientDrawable().apply {
             setColor(Color.parseColor(currType.typeColor))
             cornerRadius = 8f
-            setStroke(3, ContextCompat.getColor(App().getContext(), R.color.darkGrey))
+            setStroke(3, ContextCompat.getColor(App().getContext(), R.color.detailDark))
         }
         holder.itemView.background = gradient
     }

@@ -33,9 +33,12 @@ class MainPokeListFragment : Fragment() {
     private lateinit var adapter: MainRecyclerAdapter
     private lateinit var job: Job
     private lateinit var root: View
-    private lateinit var mLayoutState: Parcelable
+    private var mLayoutState: Parcelable? = null
+
     companion object{
         const val TESTT="TEST"
+        const val SAVED_KEY_PAGED_LIST = "PAGED_LIST"
+        const val SAVED_INSTANCE_POSITION = "INSTANCE_POSITION"
     }
 
     private val viewModel: MainViewModel by lazy {
@@ -52,27 +55,10 @@ class MainPokeListFragment : Fragment() {
         Log.e("tessaaa", "onactivityCreated")
         if (savedInstanceState != null){
             Log.e("tessss", "onactivityCreated")
-            mLayoutState = savedInstanceState.getParcelable(TESTT)!!
-            root.rv_list_main.layoutManager!!.onRestoreInstanceState(mLayoutState)
+            mLayoutState = savedInstanceState.getParcelable(SAVED_INSTANCE_POSITION)!!
         }
-    }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
         viewModel.apply {
-            if (rootView.value == null) {
-                rootView.value = inflater.inflate(R.layout.activity_main, container, false)
-                Log.e("tess", "asdasd")
-            }
-            root = rootView.value!!
-            job = Job()
-            adapter = MainRecyclerAdapter(activity!!)
-            (activity as AppCompatActivity).supportActionBar?.title = "MyPokedex"
-            initAdapter()
-
             try {
                 getLocalPokemon("").observe(
                     viewLifecycleOwner,
@@ -81,6 +67,10 @@ class MainPokeListFragment : Fragment() {
                         Log.d("test11", "${sizeData.toString()} ")
                         if (sizeData != 0) {
                             adapter.submitList(returnedValue.data)
+                            mLayoutState?.let {
+                                root.rv_list_main.layoutManager!!.onRestoreInstanceState(mLayoutState)
+                                mLayoutState = null
+                            }
                             adapter.notifyDataSetChanged()
                             root.tv_magic_layout.setGone()
                             root.pg_loading.setGone()
@@ -192,30 +182,56 @@ class MainPokeListFragment : Fragment() {
                 }
             })
         }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        viewModel.apply {
+            if (rootView.value == null) {
+                rootView.value = inflater.inflate(R.layout.fragment_main_poke_list, container, false)
+                Log.e("tess", "asdasd")
+            }
+            root = rootView.value!!
+            job = Job()
+            adapter = MainRecyclerAdapter(activity!!)
+            (activity as AppCompatActivity).supportActionBar?.title = "MyPokedex"
+            initAdapter()
+            setHasOptionsMenu(true)
+        }
         return root
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         Log.e("tessqwweq", "onsaveInsatance")
-        outState.putParcelable(TESTT , mLayoutState)
+        outState.putParcelable(SAVED_INSTANCE_POSITION,root.rv_list_main.layoutManager!!.onSaveInstanceState())
     }
 
     override fun onDestroy() {
-        Log.e("tesss", "ondESTROy")
         super.onDestroy()
+        Log.e("tesss", "ondESTROy")
         job.cancel()
     }
 
+    override fun onDetach() {
+        super.onDetach()
+        Log.e("tesss", "ondetach")
+    }
+
+
+
     override fun onPause() {
+       super.onPause()
         Log.e("tesss", "onPause")
         mLayoutState = root.rv_list_main.layoutManager!!.onSaveInstanceState()!!
-        super.onPause()
     }
 
     override fun onResume() {
-        Log.e("tesss", "onresume")
         super.onResume()
+        Log.e("tesss", "onresume")
     }
 
     private fun initAdapter() {
@@ -265,5 +281,7 @@ class MainPokeListFragment : Fragment() {
         }
         super.onCreateOptionsMenu(menu, inflater)
     }
+
+
 
 }

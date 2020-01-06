@@ -44,7 +44,7 @@
                 android:textAlignment="center"
                 android:id="@+id/pokeName"
                 android:textSize="@dimen/textSize"
-                android:textColor="@color/black"
+                android:textColor="@color/blackWhite"
                 app:layout_constraintStart_toStartOf="@id/iv_poke_picture"
                 app:layout_constraintEnd_toEndOf="@id/iv_poke_picture"
                 app:layout_constraintTop_toBottomOf="@id/iv_poke_picture"

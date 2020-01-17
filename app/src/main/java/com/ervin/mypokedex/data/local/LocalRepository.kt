@@ -11,6 +11,7 @@ import com.ervin.mypokedex.data.local.entity.type.halfeffective.TypeElementNotEf
 import com.ervin.mypokedex.data.local.entity.type.nodamage.TypeElementNoDamageEntityFrom
 import com.ervin.mypokedex.data.local.entity.type.nodamage.TypeElementNoDamageEntityTo
 import com.ervin.mypokedex.data.model.PokemonModel
+import com.ervin.mypokedex.data.model.SimplePokemonModel
 import com.ervin.mypokedex.data.model.SimplePokemonWithTypePojoModel
 import com.ervin.mypokedex.data.model.TypeElementModel
 
@@ -67,6 +68,14 @@ class LocalRepository(private val dao: PokemonDao) {
 
     suspend fun loadCountPokemonTypes(): Int {
         return dao.getCountPokemonTypes()
+    }
+
+    suspend fun getRandomSimplePokemon(): SimplePokemonModel {
+        return dao.getRandomSimplePokemon()
+    }
+
+    suspend fun getRandomAnswer(): List<String>{
+        return dao.getRandomAnswer()
     }
 
 

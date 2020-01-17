@@ -2,6 +2,7 @@ package com.ervin.mypokedex.data
 
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.paging.Config
 import androidx.paging.LivePagedListBuilder
@@ -18,6 +19,7 @@ import com.ervin.mypokedex.data.local.entity.type.halfeffective.TypeElementNotEf
 import com.ervin.mypokedex.data.local.entity.type.nodamage.TypeElementNoDamageEntityFrom
 import com.ervin.mypokedex.data.local.entity.type.nodamage.TypeElementNoDamageEntityTo
 import com.ervin.mypokedex.data.model.PokemonModel
+import com.ervin.mypokedex.data.model.SimplePokemonModel
 import com.ervin.mypokedex.data.model.SimplePokemonWithTypePojoModel
 import com.ervin.mypokedex.data.model.TypeElementModel
 import com.ervin.mypokedex.data.remote.RemoteRepository
@@ -51,8 +53,13 @@ class PokemonRepository(
         listPokemon: List<PokemonEntity>,
         listCompositePokemon: List<PokemonTypeElementEntity>
     ) {
-        localRepository.insertPokemon(listPokemon)
-        localRepository.insertCompositePokemonType(listCompositePokemon)
+        Log.d("test","${listPokemon.size} ${listCompositePokemon.size}")
+        try {
+            localRepository.insertPokemon(listPokemon)
+            localRepository.insertCompositePokemonType(listCompositePokemon)
+        }catch (e:Exception){
+            Log.d("test",e.message.toString())
+        }
     }
 
     suspend fun saveLocalTypes(
@@ -95,6 +102,7 @@ class PokemonRepository(
             val intent = Intent(App().getContext(), LaunchAppService::class.java)
             intent.putExtra("offset", countLocalPokemon)
             intent.putExtra("limit", countRemotePokemon)
+//            intent.putExtra("limit", 15)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 App().getContext().startForegroundService(intent)
             } else {
@@ -125,8 +133,16 @@ class PokemonRepository(
         return localRepository.getTypePokemon()
     }
 
+    suspend fun getRandomLocalSimplePokemon(): SimplePokemonModel{
+        return localRepository.getRandomSimplePokemon()
+    }
 
-    suspend fun getLocalCountPokemon(): Int {
+    suspend fun getRandomAnswer(): List<String> {
+        return localRepository.getRandomAnswer()
+    }
+
+
+        suspend fun getLocalCountPokemon(): Int {
         return localRepository.getCountPokemon()
     }
 }

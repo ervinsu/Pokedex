@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="view_model"
+            type="com.ervin.mypokedex.ui.home.ui.quizpokemon.QuizPokemonViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <ImageView
+            android:id="@+id/iv_quiz_question"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_marginTop="16sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:background="@color/backgroundMain"
+            android:contentDescription="@string/imageView_quiz" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_list_quiz_answer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/tv_question"
+            app:layout_constraintEnd_toEndOf="@id/tv_question"
+            app:layout_constraintTop_toBottomOf="@id/tv_question"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/quiz_answer_item"
+            android:layout_marginTop="16sp" />
+
+        <TextView
+            android:id="@+id/tv_question"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:text="@{view_model.text}"
+            tools:text="Pertanyaan adalah"
+            android:textColor="@color/blackWhite"
+            app:layout_constraintStart_toStartOf="@id/iv_quiz_question"
+            app:layout_constraintEnd_toEndOf="@id/iv_quiz_question"
+            app:layout_constraintTop_toBottomOf="@id/iv_quiz_question" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:textColor="@color/blackWhite"
+            isVisible="@{view_model.isTickShown()}"
+            android:text="@{@string/get_ticking_quiz_time(view_model.getTickIn)}"
+            android:layout_margin="16sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Question Number 5"
+            android:textColor="@color/blackWhite"
+            android:text="@{@string/get_total_answered(view_model.getTotalAnsweredQuestion)}"
+            android:layout_margin="16sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Score : "
+            android:textColor="@color/blackWhite"
+            android:text="@{view_model.highScore}"
+            android:layout_margin="16sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rv_list_quiz_answer"
+            android:layout_marginTop="24sp"
+            tools:text="YESHH"
+            android:textColor="@color/blackWhite"
+            android:text="@{view_model.termWin}"
+            android:layout_margin="16sp"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

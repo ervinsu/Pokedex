@@ -36,8 +36,6 @@ class MainPokeListFragment : Fragment() {
     private var mLayoutState: Parcelable? = null
 
     companion object{
-        const val TESTT="TEST"
-        const val SAVED_KEY_PAGED_LIST = "PAGED_LIST"
         const val SAVED_INSTANCE_POSITION = "INSTANCE_POSITION"
     }
 

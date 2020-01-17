@@ -25,7 +25,7 @@ import com.ervin.mypokedex.data.local.entity.type.nodamage.TypeElementNoDamageEn
         TypeElementNotEffectiveEntityFrom::class,
         TypeElementNoDamageEntityFrom::class
     ]
-    , version = 4
+    , version = 5
     , exportSchema = false
 )
 abstract class PokemonDatabase : RoomDatabase() {

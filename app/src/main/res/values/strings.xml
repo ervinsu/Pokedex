@@ -32,4 +32,7 @@
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
     <string name="communicate">Communicate</string>
+    <string name="imageView_quiz">ImageView Quiz</string>
+    <string name="get_total_answered">Current Question %d / 5</string>
+    <string name="get_ticking_quiz_time">Next Question in %d</string>
 </resources>

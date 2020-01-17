@@ -8,4 +8,8 @@
     <color name="detailDark">#707070</color>
     <color name="detailAccent">#9e9e9e</color>
     <color name="detailLight">#cfcfcf</color>
+    <color name="quizTrue">#64dd17</color>
+    <color name="quizFalse">#c4001d</color>
+    <color name="backgroundMain">#303030</color>
+
 </resources>

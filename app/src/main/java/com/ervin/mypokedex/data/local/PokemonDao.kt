@@ -12,6 +12,7 @@ import com.ervin.mypokedex.data.local.entity.type.halfeffective.TypeElementNotEf
 import com.ervin.mypokedex.data.local.entity.type.nodamage.TypeElementNoDamageEntityFrom
 import com.ervin.mypokedex.data.local.entity.type.nodamage.TypeElementNoDamageEntityTo
 import com.ervin.mypokedex.data.model.PokemonModel
+import com.ervin.mypokedex.data.model.SimplePokemonModel
 import com.ervin.mypokedex.data.model.SimplePokemonWithTypePojoModel
 import com.ervin.mypokedex.data.model.TypeElementModel
 
@@ -75,5 +76,14 @@ interface PokemonDao {
     @Transaction
     @Query("SELECT COUNT(TypeClassId) from TypeTable")
     suspend fun getCountPokemonTypes(): Int
+
+    @Transaction
+    @Query("SELECT pokemonId, pokemonName, pokemonSpritesUrl from PokemonTable WHERE pokemonSpritesUrl NOT in ('') ORDER by RANDOM() LIMIT 1")
+//    @Query("SELECT pokemonId, pokemonName, pokemonSpritesUrl from PokemonTable WHERE pokemonSpritesUrl NOT in ('') AND pokemonName like '%pikachu%' LIMIT 1")
+    suspend fun getRandomSimplePokemon(): SimplePokemonModel
+
+    @Transaction
+    @Query("SELECT pokemonName from PokemonTable order by RANDOM() limit 4")
+    suspend fun getRandomAnswer(): List<String>
 
 }

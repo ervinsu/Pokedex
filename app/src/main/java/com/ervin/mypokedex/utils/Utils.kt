@@ -37,6 +37,16 @@ fun View.setShow(){
     visibility = View.VISIBLE
 }
 
+fun View.setEnable(){
+    isEnabled = true
+}
+
+
+fun View.setDisable(){
+    isEnabled = false
+}
+
+
 enum class Status {
     SUCCESS,
     ERROR,

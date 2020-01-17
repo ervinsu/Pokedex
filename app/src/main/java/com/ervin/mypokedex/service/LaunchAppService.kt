@@ -24,7 +24,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import me.sargunvohra.lib.pokekotlin.client.PokeApiClient
-import me.sargunvohra.lib.pokekotlin.model.Pokemon
 
 
 class LaunchAppService : Service() {
@@ -71,62 +70,67 @@ class LaunchAppService : Service() {
     private suspend fun getRemotePokemon(pokeRepo: PokemonRepository, offset: Int, limit: Int) {
 //        val retrievedList = pokeRepo.getRemotePokemonLimit(offset, limit)
         val pokeApi = PokeApiClient()
-        val remotePokemonList: MutableList<Pokemon> = ArrayList()
-//        retrievedList.listResponseAPI.forEach { simplePokemonResponse ->
-//            val pokemonID = simplePokemonResponse.urlResponse.split("/")[6].toInt()
-//            Log.d("test", pokemonID.toString())
-//            remotePokemonList.add(pokeApi.getPokemon(pokemonID))
-//        }
-        val retrievedList = pokeApi.getPokemonList(offset, limit)
-        retrievedList.results.forEach { simplePokemonResponse ->
-            val pokemonID = simplePokemonResponse.id
-            Log.d("test", pokemonID.toString())
-            remotePokemonList.add(pokeApi.getPokemon(pokemonID))
-        }
         val pokemonEntities: MutableList<PokemonEntity> = ArrayList()
         val pokemonCompositeType: MutableList<PokemonTypeElementEntity> = ArrayList()
 
-        remotePokemonList.forEach { pokemon ->
+        val retrievedList = pokeApi.getPokemonList(offset, limit)
+        retrievedList.results.forEach { simplePokemonResponse ->
+            val pokemonID = simplePokemonResponse.id
+            val pokemon = pokeApi.getPokemon(pokemonID)
+            Log.d(TAG, pokemon.id.toString())
 
-            val objectPoke = PokemonEntity(
-                pokemon.id,
-                pokemon.name,
-                pokemon.sprites.frontDefault ?: "",
-                pokemon.stats[0].baseStat,
-                pokemon.stats[1].baseStat,
-                pokemon.stats[2].baseStat,
-                pokemon.stats[3].baseStat,
-                pokemon.stats[4].baseStat,
-                pokemon.stats[5].baseStat,
-                pokemon.weight,
-                pokemon.baseExperience,
-                pokemon.height
-            )
-
-            if(pokemon.id < 10000) {
-                try {
-                    val pokeDesc: String? =
-                        pokeApi.getPokemonSpecies(pokemon.id).flavorTextEntries[1].flavorText
-                    objectPoke.desc = pokeDesc
-                } catch (e: Exception) {
-                    Log.d("errordesc", "noData $e")
-                }
-            }
-            //add to table pokemon
-            pokemonEntities.add(
-                objectPoke
-            )
-
-            //add to composite table types pokemon
-            pokemon.types.forEach { pokemonType ->
-                pokemonCompositeType.add(
-                    PokemonTypeElementEntity(
-                        pokemon.id,
-                        pokemonType.type.id
-                    )
+            try {
+                val objectPoke = PokemonEntity(
+                    pokemon.id,
+                    pokemon.name,
+                    pokemon.sprites.frontDefault ?: "",
+                    pokemon.stats[0].baseStat,
+                    pokemon.stats[1].baseStat,
+                    pokemon.stats[2].baseStat,
+                    pokemon.stats[3].baseStat,
+                    pokemon.stats[4].baseStat,
+                    pokemon.stats[5].baseStat,
+                    pokemon.weight,
+                    pokemon.baseExperience,
+                    pokemon.height
                 )
+                Log.d(TAG, pokemon.name)
+
+                if (pokemon.id < 10000) {
+                    try {
+                        for (i in pokeApi.getPokemonSpecies(pokemon.id).flavorTextEntries.indices) {
+                            if (pokeApi.getPokemonSpecies(pokemon.id).flavorTextEntries[i].language.name == "en") {
+                                val pokeDesc =
+                                    pokeApi.getPokemonSpecies(pokemon.id).flavorTextEntries[i].flavorText.replace("\n", " ")
+                                objectPoke.desc = pokeDesc
+                                break
+                            }
+                        }
+                    } catch (e: java.lang.Exception) {
+                        Log.d("errordesc", "noData $e")
+                    }
+                }
+                //add to table pokemon
+                pokemonEntities.add(
+                    objectPoke
+                )
+
+                //add to composite table types pokemon
+                pokemon.types.forEach { pokemonType ->
+                    pokemonCompositeType.add(
+                        PokemonTypeElementEntity(
+                            pokemon.id,
+                            pokemonType.type.id
+                        )
+                    )
+                }
+            }catch (e:java.lang.Exception){
+                Log.d(TAG, e.message.toString())
             }
         }
+
+        Log.d(TAG,"${pokemonEntities.size} ${pokemonCompositeType.size}")
+
         pokeRepo.saveLocalPokemons(pokemonEntities, pokemonCompositeType)
     }
 

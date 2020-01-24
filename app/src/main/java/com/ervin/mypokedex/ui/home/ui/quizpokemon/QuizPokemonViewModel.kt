@@ -49,6 +49,7 @@ class QuizPokemonViewModel(private val pokemonRepository: PokemonRepository) : V
     }
 
     fun setTickShown(boolean: Boolean){
+        _tickIn.value = 4
         isTickShown.value = boolean
     }
 

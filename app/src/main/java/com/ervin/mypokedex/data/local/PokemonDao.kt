@@ -83,7 +83,7 @@ interface PokemonDao {
     suspend fun getRandomSimplePokemon(): SimplePokemonModel
 
     @Transaction
-    @Query("SELECT pokemonName from PokemonTable order by RANDOM() limit 4")
-    suspend fun getRandomAnswer(): List<String>
+    @Query("SELECT pokemonName from PokemonTable order by RANDOM() limit :limit")
+    suspend fun getRandomAnswer(limit : Int): List<String>
 
 }

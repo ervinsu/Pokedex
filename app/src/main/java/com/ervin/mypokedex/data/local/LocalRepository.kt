@@ -1,6 +1,7 @@
 package com.ervin.mypokedex.data.local
 
 import androidx.paging.DataSource
+import com.ervin.mypokedex.App
 import com.ervin.mypokedex.data.local.entity.PokemonEntity
 import com.ervin.mypokedex.data.local.entity.PokemonTypeElementEntity
 import com.ervin.mypokedex.data.local.entity.type.TypeElementEntity
@@ -75,7 +76,7 @@ class LocalRepository(private val dao: PokemonDao) {
     }
 
     suspend fun getRandomAnswer(): List<String>{
-        return dao.getRandomAnswer()
+        return dao.getRandomAnswer(App().getTotalAnswer()-1)
     }
 
 

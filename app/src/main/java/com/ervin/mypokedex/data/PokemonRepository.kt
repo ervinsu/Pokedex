@@ -53,7 +53,7 @@ class PokemonRepository(
         listPokemon: List<PokemonEntity>,
         listCompositePokemon: List<PokemonTypeElementEntity>
     ) {
-        Log.d("test","${listPokemon.size} ${listCompositePokemon.size}")
+        Log.d("test_service","saved pokemons ${listPokemon.size}")
         try {
             localRepository.insertPokemon(listPokemon)
             localRepository.insertCompositePokemonType(listCompositePokemon)

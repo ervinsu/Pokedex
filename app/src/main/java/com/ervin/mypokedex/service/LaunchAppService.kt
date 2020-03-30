@@ -11,7 +11,6 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.ervin.mypokedex.App
 import com.ervin.mypokedex.R
-import com.ervin.mypokedex.data.PokemonRepository
 import com.ervin.mypokedex.data.local.entity.PokemonEntity
 import com.ervin.mypokedex.data.local.entity.PokemonTypeElementEntity
 import com.ervin.mypokedex.di.Injection
@@ -19,43 +18,94 @@ import com.ervin.mypokedex.utils.ONGOING_CHANNEL_ID
 import com.ervin.mypokedex.utils.ON_LOADING_POKEMON
 import com.ervin.mypokedex.utils.cancelNotification
 import com.ervin.mypokedex.utils.getNotificationBuilder
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.produce
 import me.sargunvohra.lib.pokekotlin.client.PokeApiClient
 
 
 class LaunchAppService : Service() {
     private var currentNotify = 0
     private val job = Job()
-
+    private lateinit var manager: NotificationManager
+    private var maxLimit: Int = 0
+    private val pokeRepo by lazy {
+       Injection.provideRepository(App())
+    }
     override fun onBind(p0: Intent?): IBinder? {
         return null
     }
 
+    @ExperimentalCoroutinesApi
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val manager: NotificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         createNotificationOnProgress()
-        val pokeRepo = Injection.provideRepository(App())
-        CoroutineScope(job + Dispatchers.IO).launch {
-            try {
-                val offset = intent?.getIntExtra("offset", 0)?:0
-                val limit = intent?.getIntExtra("limit", 0)?:0 - offset
-                Log.d("tag", "$offset $limit")
-                var count = offset
-                val maxLimit = limit - (limit % 10)
-                var i = 1
-                while (count < maxLimit) {
-                    manager.notify(ON_LOADING_POKEMON,updateNotificationForRemoteOnProgress(maxLimit/10, i))
-                    getRemotePokemon(pokeRepo, count, 10)
-                    count += 10
-                    i++
+//        val pokeRepo = Injection.provideRepository(App())
+//
+//        val offset = intent?.getIntExtra("offset", 0) ?: 0
+//        val limit = intent?.getIntExtra("limit", 0) ?: 0 - offset
+//        Log.d(TAG, "$offset $limit") //0 365
+//
+//        //total pokemon from database
+//        var count = offset // 0
+//        //last count total pokemon if mod by 100
+//        val lastLimit = limit % 100
+//        //count limit for loop while
+//        maxLimit = limit - lastLimit
+//
+//        CoroutineScope(job + Dispatchers.Main).launch {
+//
+//            try {
+//
+//                while (count < maxLimit) {
+//                    CoroutineScope(job + Dispatchers.IO).launch{
+//                        getRemotePokemon(pokeRepo, count, 100)
+//                    }
+//                    Log.d(TAG, "$count")
+//                    count += 100
+//                }
+//                CoroutineScope(job + Dispatchers.IO).launch{
+//                    getRemotePokemon(pokeRepo, count, lastLimit)
+//                }
+//                sendFeedbackToActivity(true)
+//            } catch (e: Exception) {
+//                Log.d("exceptionFetchPokemon", e.message.toString())
+//                sendFeedbackToActivity(false)
+//            }
+//            Log.d(TAG, "Service_finish")
+//            cancelNotification(currentNotify)
+//            stopSelf()
+//            stopForeground(true)
+//        }
+
+
+        val offset = intent?.getIntExtra("offset", 0)?:0
+        val limit = intent?.getIntExtra("limit", 0)?:0 - offset
+        Log.d("tag", "$offset $limit")
+        var count = offset
+        val currLimitPerFetch = 10
+        val lastLimitFetch = limit % currLimitPerFetch
+        val maxOffset = limit - lastLimitFetch
+
+        CoroutineScope(job + Dispatchers.Main).launch {
+
+             val pokemonListChannel = produce(CoroutineName("db")){
+                while (count < maxOffset){
+                    send(InnerOffsetPokemon(count,currLimitPerFetch))
+                    count += currLimitPerFetch
                 }
-                val currLimit = limit % 10
-                getRemotePokemon(pokeRepo, count, currLimit)
-                sendFeedbackToActivity(true)
+                //add to channel for last limit
+                send(InnerOffsetPokemon(count, lastLimitFetch))
+            }
+
+            try {
+                withContext(Dispatchers.IO){
+                    launch(CoroutineName("launcher-1")) { getQueueRemotePokemon(pokemonListChannel)  }
+                    launch(CoroutineName("launcher-2")) { getQueueRemotePokemon(pokemonListChannel)  }
+                    launch(CoroutineName("launcher-3")) { getQueueRemotePokemon(pokemonListChannel)  }
+                    launch(CoroutineName("launcher-4")) { getQueueRemotePokemon(pokemonListChannel)  }
+                    launch(CoroutineName("launcher-5")) { getQueueRemotePokemon(pokemonListChannel)  }
+                }
             } catch (e: Exception) {
                 Log.d("exceptionFetchPokemon", e.message.toString())
                 sendFeedbackToActivity(false)
@@ -64,10 +114,94 @@ class LaunchAppService : Service() {
             stopSelf()
             stopForeground(true)
         }
+
+
+//        CoroutineScope(job + Dispatchers.IO).launch {
+//            try {
+//
+//                while (count < maxOffset) {
+//                    manager.notify(ON_LOADING_POKEMON,updateNotificationForRemoteOnProgress(maxOffset/currLimitPerFetch, i))
+//                    getRemotePokemon(count, currLimitPerFetch)
+//                    count += currLimitPerFetch
+//                    i++
+//                }
+//                val currLimit = limit % currLimitPerFetch
+//                getRemotePokemon(count, currLimit)
+//                sendFeedbackToActivity(true)
+//            } catch (e: Exception) {
+//                Log.d("exceptionFetchPokemon", e.message.toString())
+//                sendFeedbackToActivity(false)
+//            }
+//        }
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private suspend fun getRemotePokemon(pokeRepo: PokemonRepository, offset: Int, limit: Int) {
+    private suspend fun getQueueRemotePokemon(receiveQueuePokemons: ReceiveChannel<InnerOffsetPokemon>){
+        for(queuePokemons in receiveQueuePokemons){
+            val pokeApi = PokeApiClient()
+            val pokemonEntities: MutableList<PokemonEntity> = ArrayList()
+            val pokemonCompositeType: MutableList<PokemonTypeElementEntity> = ArrayList()
+            val retrievedList = pokeApi.getPokemonList(queuePokemons.offset, queuePokemons.limit)
+            retrievedList.results.forEach { simplePokemonResponse ->
+                val pokemonID = simplePokemonResponse.id
+                val pokemon = pokeApi.getPokemon(pokemonID)
+                Log.d(TAG, pokemon.id.toString())
+
+                try {
+                    val objectPoke = PokemonEntity(
+                        pokemon.id,
+                        pokemon.name,
+                        pokemon.sprites.frontDefault ?: "",
+                        pokemon.stats[0].baseStat,
+                        pokemon.stats[1].baseStat,
+                        pokemon.stats[2].baseStat,
+                        pokemon.stats[3].baseStat,
+                        pokemon.stats[4].baseStat,
+                        pokemon.stats[5].baseStat,
+                        pokemon.weight,
+                        pokemon.baseExperience,
+                        pokemon.height
+                    )
+                    Log.d(TAG, pokemon.name)
+
+                    if (pokemon.id < 10000) {
+                        try {
+                            for (i in pokeApi.getPokemonSpecies(pokemon.id).flavorTextEntries.indices) {
+                                if (pokeApi.getPokemonSpecies(pokemon.id).flavorTextEntries[i].language.name == "en") {
+                                    val pokeDesc =
+                                        pokeApi.getPokemonSpecies(pokemon.id).flavorTextEntries[i].flavorText.replace("\n", " ")
+                                    objectPoke.desc = pokeDesc
+                                    break
+                                }
+                            }
+                        } catch (e: java.lang.Exception) {
+                            Log.d("errordesc", "noData $e")
+                        }
+                    }
+                    //add to table pokemon
+                    pokemonEntities.add(
+                        objectPoke
+                    )
+
+                    //add to composite table types pokemon
+                    pokemon.types.forEach { pokemonType ->
+                        pokemonCompositeType.add(
+                            PokemonTypeElementEntity(
+                                pokemon.id,
+                                pokemonType.type.id
+                            )
+                        )
+                    }
+                }catch (e:java.lang.Exception){
+                    Log.d(TAG, e.message.toString())
+                }
+            }
+            pokeRepo.saveLocalPokemons(pokemonEntities, pokemonCompositeType)
+//            manager.notify(ON_LOADING_POKEMON,updateNotificationForRemoteOnProgress(maxOffset/currLimitPerFetch, i))
+        }
+    }
+
+    private suspend fun getRemotePokemon(offset: Int, limit: Int) {
 //        val retrievedList = pokeRepo.getRemotePokemonLimit(offset, limit)
         val pokeApi = PokeApiClient()
         val pokemonEntities: MutableList<PokemonEntity> = ArrayList()
@@ -129,7 +263,12 @@ class LaunchAppService : Service() {
             }
         }
 
-        Log.d(TAG,"${pokemonEntities.size} ${pokemonCompositeType.size}")
+//        manager.notify(
+//            ON_LOADING_POKEMON,
+//            updateNotificationForRemoteOnProgress(maxLimit / (1+(offset/100)), maxLimit)
+//        )
+
+//        Log.d(TAG,"notification limit ${maxLimit / (1+(offset/100))}, $maxLimit")
 
         pokeRepo.saveLocalPokemons(pokemonEntities, pokemonCompositeType)
     }
@@ -179,6 +318,11 @@ class LaunchAppService : Service() {
         const val RESULT_FETCHING_POKEMON = "RESULT_FETCH"
         const val INTENT_FILTER_SERVICE_GET_POKEMON = "INTENT_FILTER_GET_POKEMON"
     }
+
+    data class InnerOffsetPokemon(
+        val offset: Int,
+        val limit: Int
+    )
 
 
 }

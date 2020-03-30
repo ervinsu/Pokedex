@@ -205,7 +205,14 @@ class MainPokeListFragment : Fragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         Log.e("tessqwweq", "onsaveInsatance")
-        outState.putParcelable(SAVED_INSTANCE_POSITION,root.rv_list_main.layoutManager!!.onSaveInstanceState())
+        try {
+            outState.putParcelable(
+                SAVED_INSTANCE_POSITION,
+                root.rv_list_main.layoutManager!!.onSaveInstanceState()
+            )
+        }catch (e:Exception){
+            Log.d("expLayoutNotGenerated", e.message.toString())
+        }
     }
 
     override fun onDestroy() {

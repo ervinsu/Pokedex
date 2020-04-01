@@ -40,44 +40,6 @@ class LaunchAppService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         createNotificationOnProgress()
-//        val pokeRepo = Injection.provideRepository(App())
-//
-//        val offset = intent?.getIntExtra("offset", 0) ?: 0
-//        val limit = intent?.getIntExtra("limit", 0) ?: 0 - offset
-//        Log.d(TAG, "$offset $limit") //0 365
-//
-//        //total pokemon from database
-//        var count = offset // 0
-//        //last count total pokemon if mod by 100
-//        val lastLimit = limit % 100
-//        //count limit for loop while
-//        maxLimit = limit - lastLimit
-//
-//        CoroutineScope(job + Dispatchers.Main).launch {
-//
-//            try {
-//
-//                while (count < maxLimit) {
-//                    CoroutineScope(job + Dispatchers.IO).launch{
-//                        getRemotePokemon(pokeRepo, count, 100)
-//                    }
-//                    Log.d(TAG, "$count")
-//                    count += 100
-//                }
-//                CoroutineScope(job + Dispatchers.IO).launch{
-//                    getRemotePokemon(pokeRepo, count, lastLimit)
-//                }
-//                sendFeedbackToActivity(true)
-//            } catch (e: Exception) {
-//                Log.d("exceptionFetchPokemon", e.message.toString())
-//                sendFeedbackToActivity(false)
-//            }
-//            Log.d(TAG, "Service_finish")
-//            cancelNotification(currentNotify)
-//            stopSelf()
-//            stopForeground(true)
-//        }
-
 
         val offset = intent?.getIntExtra("offset", 0)?:0
         val limit = intent?.getIntExtra("limit", 0)?:0 - offset
@@ -105,6 +67,11 @@ class LaunchAppService : Service() {
                     launch(CoroutineName("launcher-3")) { getQueueRemotePokemon(pokemonListChannel)  }
                     launch(CoroutineName("launcher-4")) { getQueueRemotePokemon(pokemonListChannel)  }
                     launch(CoroutineName("launcher-5")) { getQueueRemotePokemon(pokemonListChannel)  }
+                    launch(CoroutineName("launcher-6")) { getQueueRemotePokemon(pokemonListChannel)  }
+                    launch(CoroutineName("launcher-7")) { getQueueRemotePokemon(pokemonListChannel)  }
+                    launch(CoroutineName("launcher-8")) { getQueueRemotePokemon(pokemonListChannel)  }
+                    launch(CoroutineName("launcher-9")) { getQueueRemotePokemon(pokemonListChannel)  }
+                    launch(CoroutineName("launcher-10")) { getQueueRemotePokemon(pokemonListChannel)  }
                 }
             } catch (e: Exception) {
                 Log.d("exceptionFetchPokemon", e.message.toString())
@@ -114,25 +81,6 @@ class LaunchAppService : Service() {
             stopSelf()
             stopForeground(true)
         }
-
-
-//        CoroutineScope(job + Dispatchers.IO).launch {
-//            try {
-//
-//                while (count < maxOffset) {
-//                    manager.notify(ON_LOADING_POKEMON,updateNotificationForRemoteOnProgress(maxOffset/currLimitPerFetch, i))
-//                    getRemotePokemon(count, currLimitPerFetch)
-//                    count += currLimitPerFetch
-//                    i++
-//                }
-//                val currLimit = limit % currLimitPerFetch
-//                getRemotePokemon(count, currLimit)
-//                sendFeedbackToActivity(true)
-//            } catch (e: Exception) {
-//                Log.d("exceptionFetchPokemon", e.message.toString())
-//                sendFeedbackToActivity(false)
-//            }
-//        }
         return super.onStartCommand(intent, flags, startId)
     }
 

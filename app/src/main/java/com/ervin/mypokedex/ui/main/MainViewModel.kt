@@ -121,7 +121,6 @@ class MainViewModel(private val pokemonRepository: PokemonRepository) : ViewMode
 
     fun getLocalPokemon(pokeName: String): LiveData<Response<PagedList<SimplePokemonWithTypePojoModel>>> {
         val data = MutableLiveData<Response<PagedList<SimplePokemonWithTypePojoModel>>>()
-//        Log.d("localhere","local")
         return Transformations.switchMap(refreshLocalPokemon(pokeName)) { pagedList ->
             data.value = Response.success(pagedList)
             data

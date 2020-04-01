@@ -25,6 +25,7 @@ import com.ervin.mypokedex.data.model.TypeElementModel
 import com.ervin.mypokedex.data.remote.RemoteRepository
 import com.ervin.mypokedex.data.remote.entity.ListAPIPokemonResponse
 import com.ervin.mypokedex.service.LaunchAppService
+import com.ervin.mypokedex.utils.isServiceRunning
 
 class PokemonRepository(
     private val remoteRepository: RemoteRepository,
@@ -96,9 +97,8 @@ class PokemonRepository(
 
 
     suspend fun isPokemonAvailable(countRemotePokemon: Int) {
-//        CoroutineScope(Dispatchers.IO).launch {
         val countLocalPokemon = localRepository.getCountPokemon()
-        if (countLocalPokemon != countRemotePokemon) {
+        if (countLocalPokemon != countRemotePokemon && !isServiceRunning(LaunchAppService::class.java)) {
             val intent = Intent(App().getContext(), LaunchAppService::class.java)
             intent.putExtra("offset", countLocalPokemon)
             intent.putExtra("limit", countRemotePokemon)

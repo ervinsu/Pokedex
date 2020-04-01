@@ -14,6 +14,7 @@ import android.util.DisplayMetrics
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.core.app.NotificationCompat
+import com.ervin.mypokedex.App
 import com.ervin.mypokedex.R
 import java.net.InetAddress
 import java.net.UnknownHostException
@@ -53,9 +54,9 @@ enum class Status {
     LOADING
 }
 
-fun isServiceRunning(activity:Activity,serviceClass: Class<*>):Boolean{
-    val manager = activity.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
-    for (service in manager!!.getRunningServices(Int.MAX_VALUE)) {
+fun isServiceRunning(serviceClass: Class<*>):Boolean{
+    val manager = (App().getContext().getSystemService(Context.ACTIVITY_SERVICE)) as ActivityManager
+    for (service in manager.getRunningServices(Int.MAX_VALUE)) {
         if (serviceClass.name == service.service.className) {
             return true
         }

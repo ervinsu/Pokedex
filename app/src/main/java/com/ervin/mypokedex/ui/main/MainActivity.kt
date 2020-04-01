@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
                         tv_magic_layout.setGone()
                         pg_loading.setGone()
                         pg_next_loading.setGone()
-                        Log.d("test22", "${sizeData.toString()} ${isServiceRunning(this@MainActivity,LaunchAppService::class.java)}")
+                        Log.d("test22", "${sizeData.toString()} ${isServiceRunning(LaunchAppService::class.java)}")
                     } else {
                         getIsDataLoaded().observe(this@MainActivity, Observer {
                             if(!it){
@@ -133,7 +133,7 @@ class MainActivity : AppCompatActivity() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (!recyclerView.canScrollVertically(1)) {
-                    if(isServiceRunning(this@MainActivity, LaunchAppService::class.java)){
+                    if(isServiceRunning(LaunchAppService::class.java)){
                         pg_next_loading.setShow()
                         Log.d("pg_main","show")
                     }

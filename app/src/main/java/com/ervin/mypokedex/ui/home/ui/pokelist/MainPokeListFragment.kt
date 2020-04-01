@@ -50,6 +50,7 @@ class MainPokeListFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
         Log.e("tessaaa", "onactivityCreated")
         if (savedInstanceState != null){
             Log.e("tessss", "onactivityCreated")
@@ -75,7 +76,6 @@ class MainPokeListFragment : Fragment() {
                             root.pg_next_loading.setGone()
                             Log.d(
                                 "test22", "${sizeData.toString()} ${isServiceRunning(
-                                    activity!!,
                                     LaunchAppService::class.java
                                 )}"
                             )
@@ -169,7 +169,7 @@ class MainPokeListFragment : Fragment() {
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
                     if (!recyclerView.canScrollVertically(1)) {
-                        if (isServiceRunning(activity!!, LaunchAppService::class.java)) {
+                        if (isServiceRunning(LaunchAppService::class.java)) {
                             root.pg_next_loading.setShow()
                             Log.d("pg_main", "show")
                         }

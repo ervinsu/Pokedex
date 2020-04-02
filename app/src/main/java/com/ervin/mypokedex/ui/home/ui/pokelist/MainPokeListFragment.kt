@@ -37,6 +37,7 @@ class MainPokeListFragment : Fragment() {
 
     companion object{
         const val SAVED_INSTANCE_POSITION = "INSTANCE_POSITION"
+        const val TAG = "MainPokeFragment"
     }
 
     private val viewModel: MainViewModel by lazy {
@@ -51,9 +52,9 @@ class MainPokeListFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        Log.e("tessaaa", "onactivityCreated")
+        Log.e(TAG, "onactivityCreated")
         if (savedInstanceState != null){
-            Log.e("tessss", "onactivityCreated")
+            Log.e(TAG, "onactivityCreated")
             mLayoutState = savedInstanceState.getParcelable(SAVED_INSTANCE_POSITION)!!
         }
 
@@ -63,7 +64,7 @@ class MainPokeListFragment : Fragment() {
                     viewLifecycleOwner,
                     Observer { returnedValue ->
                         val sizeData = returnedValue.data?.size
-                        Log.d("test11", "${sizeData.toString()} ")
+                        Log.d(TAG, " pokemon size ${sizeData.toString()} ")
                         if (sizeData != 0) {
                             adapter.submitList(returnedValue.data)
                             mLayoutState?.let {
@@ -75,7 +76,7 @@ class MainPokeListFragment : Fragment() {
                             root.pg_loading.setGone()
                             root.pg_next_loading.setGone()
                             Log.d(
-                                "test22", "${sizeData.toString()} ${isServiceRunning(
+                                TAG, "size pokemon now and isService running${sizeData.toString()} ${isServiceRunning(
                                     LaunchAppService::class.java
                                 )}"
                             )
@@ -89,7 +90,7 @@ class MainPokeListFragment : Fragment() {
                                         loadRemotePokemons2().observe(
                                             viewLifecycleOwner,
                                             Observer { status ->
-                                                Log.d("remotePokemon", status.toString())
+                                                Log.d(TAG, "status loadData $status")
                                                 if (!status) {
                                                     val feedback = Snackbar.make(
                                                         activity!!.window.decorView,
@@ -109,7 +110,7 @@ class MainPokeListFragment : Fragment() {
                                             })
 
                                         loadRemoteTypesPokemon().collect { status ->
-                                            Log.d("remoteTypes", status.toString())
+                                            Log.d(TAG, "remote type status $status")
                                             if (!status) {
                                                 val feedback = Snackbar.make(
                                                     activity!!.window.decorView,
@@ -190,7 +191,6 @@ class MainPokeListFragment : Fragment() {
         viewModel.apply {
             if (rootView.value == null) {
                 rootView.value = inflater.inflate(R.layout.fragment_main_poke_list, container, false)
-                Log.e("tess", "asdasd")
             }
             root = rootView.value!!
             job = Job()
@@ -204,7 +204,7 @@ class MainPokeListFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        Log.e("tessqwweq", "onsaveInsatance")
+        Log.e(TAG, "onsaveInsatance")
         try {
             outState.putParcelable(
                 SAVED_INSTANCE_POSITION,
@@ -217,26 +217,26 @@ class MainPokeListFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.e("tesss", "ondESTROy")
+        Log.e(TAG, "ondESTROy")
         job.cancel()
     }
 
     override fun onDetach() {
         super.onDetach()
-        Log.e("tesss", "ondetach")
+        Log.e(TAG, "ondetach")
     }
 
 
 
     override fun onPause() {
        super.onPause()
-        Log.e("tesss", "onPause")
+        Log.e(TAG, "onPause")
         mLayoutState = root.rv_list_main.layoutManager!!.onSaveInstanceState()!!
     }
 
     override fun onResume() {
         super.onResume()
-        Log.e("tesss", "onresume")
+        Log.e(TAG, "onresume")
     }
 
     private fun initAdapter() {
@@ -272,7 +272,7 @@ class MainPokeListFragment : Fragment() {
                             this@MainPokeListFragment,
                             Observer { returnedValue ->
                                 val sizeData = returnedValue.data?.size
-                                Log.d("test22", "${sizeData.toString()} ")
+                                Log.d(TAG, "size pokemon that fit with search ${sizeData.toString()} ")
                                 if (sizeData != 0) {
                                     adapter.submitList(returnedValue.data)
                                     adapter.notifyDataSetChanged()

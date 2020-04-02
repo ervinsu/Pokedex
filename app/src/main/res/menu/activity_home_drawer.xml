@@ -12,21 +12,17 @@
             />
 
         <item
-            android:id="@+id/nav_home"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Quiz ?" />
-        <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/attack" />
+            android:id="@+id/nav_quiz_pokemon"
+            android:icon="@drawable/ic_question_answer"
+            android:title="@string/quiz_pokemon" />
     </group>
 
     <item android:title="@string/communicate">
         <menu>
             <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="@string/attack" />
+                android:id="@+id/nav_about_me"
+                android:icon="@drawable/ic_about_me"
+                android:title="@string/about_me" />
         </menu>
     </item>
 

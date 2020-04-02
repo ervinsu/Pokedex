@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.ervin.mypokedex.data.PokemonRepository
 import com.ervin.mypokedex.di.Injection
 import com.ervin.mypokedex.ui.detail.DetailViewModel
+import com.ervin.mypokedex.ui.home.ui.aboutme.AboutMeViewModel
 import com.ervin.mypokedex.ui.home.ui.quizpokemon.QuizPokemonViewModel
 import com.ervin.mypokedex.ui.main.MainViewModel
 
@@ -37,6 +38,9 @@ class ViewModelFactory(repository: PokemonRepository): ViewModelProvider.NewInst
             }
             modelClass.isAssignableFrom(QuizPokemonViewModel::class.java) -> {
                 return QuizPokemonViewModel(pokemonRepository) as T
+            }
+            modelClass.isAssignableFrom(AboutMeViewModel::class.java) ->{
+                return AboutMeViewModel() as T
             }
             else -> return super.create(modelClass)
         }

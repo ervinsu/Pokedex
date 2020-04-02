@@ -16,6 +16,7 @@ class QuizPokemonViewModel(private val pokemonRepository: PokemonRepository) : V
     }
 
     val text: LiveData<String> = _text
+    val tickinForNextQuestion = 4
 
     private val _highScore = MutableLiveData<Int>().apply {
         value = 0
@@ -33,7 +34,7 @@ class QuizPokemonViewModel(private val pokemonRepository: PokemonRepository) : V
 
     //ticking time
     private val _tickIn = MutableLiveData<Int>().apply {
-        value = 4
+        value = tickinForNextQuestion
     }
 
     fun getTickIn():MutableLiveData<Int>{
@@ -49,7 +50,7 @@ class QuizPokemonViewModel(private val pokemonRepository: PokemonRepository) : V
     }
 
     fun setTickShown(boolean: Boolean){
-        _tickIn.value = 4
+        _tickIn.value = tickinForNextQuestion
         isTickShown.value = boolean
     }
 

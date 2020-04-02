@@ -35,4 +35,6 @@
     <string name="imageView_quiz">ImageView Quiz</string>
     <string name="get_total_answered">Current Question %d / 5</string>
     <string name="get_ticking_quiz_time">Next Question in %d</string>
+    <string name="quiz_pokemon">Quiz Pokemon</string>
+    <string name="about_me">About</string>
 </resources>

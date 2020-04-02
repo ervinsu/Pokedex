@@ -27,7 +27,11 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 
+
+//this activity is a template for creating a plain list of pokemon
+//it doesn't used anyway
 class MainActivity : AppCompatActivity() {
+
 
     private val adapter = MainRecyclerAdapter(this@MainActivity)
     private lateinit var mainViewModel: MainViewModel
@@ -46,14 +50,12 @@ class MainActivity : AppCompatActivity() {
                 //get saved pokemon
                 getLocalPokemon("").observe(this@MainActivity, Observer { returnedValue ->
                     val sizeData = returnedValue.data?.size
-                    Log.d("test11", "${sizeData.toString()} ")
                     if (sizeData != 0) {
                         adapter.submitList(returnedValue.data)
                         adapter.notifyDataSetChanged()
                         tv_magic_layout.setGone()
                         pg_loading.setGone()
                         pg_next_loading.setGone()
-                        Log.d("test22", "${sizeData.toString()} ${isServiceRunning(LaunchAppService::class.java)}")
                     } else {
                         getIsDataLoaded().observe(this@MainActivity, Observer {
                             if(!it){

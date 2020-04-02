@@ -12,20 +12,14 @@
         tools:layout="@layout/activity_main"/>
 
     <fragment
-        android:id="@+id/nav_home"
+        android:id="@+id/nav_quiz_pokemon"
         android:name="com.ervin.mypokedex.ui.home.ui.quizpokemon.QuizPokemonFragment"
         android:label="@string/app_name"
         tools:layout="@layout/fragment_quiz_pokemon" />
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.ervin.mypokedex.ui.home.ui.gallery.GalleryFragment"
-        android:label="@string/attack"
-        tools:layout="@layout/fragment_gallery" />
-
-    <fragment
-        android:id="@+id/nav_send"
-        android:name="com.ervin.mypokedex.ui.home.ui.send.SendFragment"
-        android:label="@string/No_Connection"
-        tools:layout="@layout/fragment_send" />
+        android:id="@+id/nav_about_me"
+        android:name="com.ervin.mypokedex.ui.home.ui.aboutme.AboutMeFragment"
+        android:label="@string/about_me"
+        tools:layout="@layout/fragment_about_me" />
 </navigation>

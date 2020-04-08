@@ -10,17 +10,16 @@ import androidx.dynamicanimation.animation.SpringAnimation
 import androidx.dynamicanimation.animation.SpringForce
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.ervin.mypokedex.R
 import com.ervin.mypokedex.databinding.FragmentQuizPokemonBinding
-import com.ervin.mypokedex.viewmodel.ViewModelFactory
 import kotlinx.android.synthetic.main.fragment_quiz_pokemon.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class QuizPokemonFragment : Fragment() {
@@ -28,17 +27,19 @@ class QuizPokemonFragment : Fragment() {
     private lateinit var root:View
     private var listAnswer:MutableList<String> = arrayListOf()
 
-    private val quizPokemonViewModel: QuizPokemonViewModel by lazy{
-        val factory: ViewModelFactory =
-            ViewModelFactory.getInstance(this@QuizPokemonFragment.activity!!.application)
-        return@lazy ViewModelProvider(
-            this@QuizPokemonFragment,
-            factory
-        ).get(QuizPokemonViewModel::class.java)
-    }
+//    private val quizPokemonViewModel: QuizPokemonViewModel by lazy{
+//        val factory: ViewModelFactory =
+//            ViewModelFactory.getInstance(this@QuizPokemonFragment.requireActivity().application)
+//        return@lazy ViewModelProvider(
+//            this@QuizPokemonFragment,
+//            factory
+//        ).get(QuizPokemonViewModel::class.java)
+//    }
+
+    private val quizPokemonViewModel by viewModel<QuizPokemonViewModel>()
 
     private val adapter: QuizPokemonAnswerAdapter by lazy {
-        return@lazy QuizPokemonAnswerAdapter(this@QuizPokemonFragment.activity!!.applicationContext, quizPokemonViewModel).apply {
+        return@lazy QuizPokemonAnswerAdapter(this@QuizPokemonFragment.requireActivity().applicationContext, quizPokemonViewModel).apply {
             setListPokemon(listAnswer)
         }
 

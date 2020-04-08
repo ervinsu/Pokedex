@@ -10,28 +10,28 @@ import android.view.Window
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
 import com.ervin.mypokedex.R
 import com.ervin.mypokedex.databinding.ActivityDetailBinding
-import com.ervin.mypokedex.viewmodel.ViewModelFactory
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.getViewModel
 
 
 class DetailActivity : AppCompatActivity() {
 
     private val job = Job()
     private val listDetailType : MutableList<DetailTypeAdapter.PokemonTypeWeaknessFrom> = arrayListOf()
-    val map = mutableMapOf<String,DetailTypeAdapter.PokemonTypeWeaknessFrom>()
+    private val map = mutableMapOf<String,DetailTypeAdapter.PokemonTypeWeaknessFrom>()
 
-    private val detailViewModel: DetailViewModel by lazy {
-        val factory: ViewModelFactory = ViewModelFactory.getInstance(this@DetailActivity.application)
-        return@lazy ViewModelProvider(this@DetailActivity, factory).get(DetailViewModel::class.java)
-    }
+//    private val detailViewModel: DetailViewModel by lazy {
+//        val factory: ViewModelFactory = ViewModelFactory.getInstance(this@DetailActivity.application)
+//        return@lazy ViewModelProvider(this@DetailActivity, factory).get(DetailViewModel::class.java)
+//    }
+    private val detailViewModel = getViewModel(DetailViewModel::class)
 
     private lateinit var detailTypeAdapter: DetailTypeAdapter
 
@@ -55,7 +55,7 @@ class DetailActivity : AppCompatActivity() {
             window.enterTransition = fade
             window.exitTransition = fade
         }
-        detailTypeAdapter = DetailTypeAdapter(listDetailType)
+        detailTypeAdapter = DetailTypeAdapter(listDetailType, this@DetailActivity)
         rv_list_detail_weakness.adapter = detailTypeAdapter
 
         val pokeId = intent.getIntExtra(INTENT_POKEMON_ID,0)

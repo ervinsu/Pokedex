@@ -2,13 +2,11 @@ package com.ervin.mypokedex
 
 import android.app.Application
 import android.content.Context
+import com.ervin.mypokedex.di.*
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 
 class App : Application() {
-//    @Inject lateinit var pokemonFetchService: PokemonFetchService
-//
-//    init {
-//        DaggerServicePokemonComponent.create().injectMainActivity(this)
-//    }
 
     companion object{
         private lateinit var context: Context
@@ -32,6 +30,10 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         context = applicationContext
+        startKoin {
+            androidContext(this@App)
+            modules(listOf(appModule, mainViewModelModule, detailViewModelModule, quizPokemonViewModelModule, aboutMePokemonviewModelModule))
+        }
     }
 
 }

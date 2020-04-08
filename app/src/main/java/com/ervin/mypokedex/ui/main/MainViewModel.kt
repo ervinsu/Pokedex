@@ -140,7 +140,9 @@ class MainViewModel(private val pokemonRepository: PokemonRepository) : ViewMode
         if (pokemonRepository.getLocalCountPokemonTypes() == 0) {
             try {
                 val elementEntities: MutableList<TypeElementEntity> = ArrayList()
+                //fetch types of pokemon
                 val pokeTypes = pokemonRepository.getRemotePokemonTypes().listResponseAPI
+
                 val pokeApi = PokeApiClient()
                 val superEffectiveListTo: MutableList<TypeElementSuperEffectiveEntityTo> = ArrayList()
                 val notEffectiveListTo: MutableList<TypeElementNotEffectiveEntityTo> = ArrayList()

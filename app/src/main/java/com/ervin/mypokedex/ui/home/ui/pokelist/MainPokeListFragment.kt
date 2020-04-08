@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ervin.mypokedex.R
@@ -20,7 +19,6 @@ import com.ervin.mypokedex.service.LaunchAppService
 import com.ervin.mypokedex.ui.main.MainRecyclerAdapter
 import com.ervin.mypokedex.ui.main.MainViewModel
 import com.ervin.mypokedex.utils.*
-import com.ervin.mypokedex.viewmodel.ViewModelFactory
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.coroutines.CoroutineScope
@@ -28,6 +26,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainPokeListFragment : Fragment() {
     private lateinit var adapter: MainRecyclerAdapter
@@ -40,14 +39,15 @@ class MainPokeListFragment : Fragment() {
         const val TAG = "MainPokeFragment"
     }
 
-    private val viewModel: MainViewModel by lazy {
-        val factory: ViewModelFactory =
-            ViewModelFactory.getInstance(this@MainPokeListFragment.activity!!.application)
-        return@lazy ViewModelProvider(
-            this@MainPokeListFragment,
-            factory
-        ).get(MainViewModel::class.java)
-    }
+//    private val viewModel: MainViewModel by lazy {
+//        val factory: ViewModelFactory =
+//            ViewModelFactory.getInstance(this@MainPokeListFragment.activity!!.application)
+//        return@lazy ViewModelProvider(
+//            this@MainPokeListFragment,
+//            factory
+//        ).get(MainViewModel::class.java)
+//    }
+    private val viewModel by viewModel<MainViewModel>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -93,15 +93,16 @@ class MainPokeListFragment : Fragment() {
                                                 Log.d(TAG, "status loadData $status")
                                                 if (!status) {
                                                     val feedback = Snackbar.make(
-                                                        activity!!.window.decorView,
+                                                        requireActivity().window.decorView,
                                                         "No Internet Connection",
                                                         Snackbar.LENGTH_LONG
                                                     )
-                                                    feedback.setAction("Try Again") { viewModel.loadRemoteTypesPokemon() }
+                                                    //re-load called from viewmodel
+                                                    feedback.setAction("Try Again") { loadRemoteTypesPokemon() }
                                                     feedback.show()
                                                 } else {
                                                     Snackbar.make(
-                                                        activity!!.window.decorView,
+                                                        requireActivity().window.decorView,
                                                         "Database List start to be added",
                                                         Snackbar.LENGTH_LONG
                                                     ).show()
@@ -113,15 +114,16 @@ class MainPokeListFragment : Fragment() {
                                             Log.d(TAG, "remote type status $status")
                                             if (!status) {
                                                 val feedback = Snackbar.make(
-                                                    activity!!.window.decorView,
+                                                    requireActivity().window.decorView,
                                                     "No Internet Connection",
                                                     Snackbar.LENGTH_LONG
                                                 )
-                                                feedback.setAction("Try Again") { viewModel.loadRemoteTypesPokemon() }
+                                                //re-load called from viewmodel
+                                                feedback.setAction("Try Again") { loadRemoteTypesPokemon() }
                                                 feedback.show()
                                             } else {
                                                 Snackbar.make(
-                                                    activity!!.window.decorView,
+                                                    requireActivity().window.decorView,
                                                     "Database TypePokemon start to be add",
                                                     Snackbar.LENGTH_LONG
                                                 ).show()
@@ -135,7 +137,7 @@ class MainPokeListFragment : Fragment() {
                                             Observer { status ->
                                                 if (status)
                                                     Snackbar.make(
-                                                        activity!!.window.decorView,
+                                                        requireActivity().window.decorView,
                                                         "Update data Pokemon Success",
                                                         Snackbar.LENGTH_LONG
                                                     ).show()
@@ -144,13 +146,15 @@ class MainPokeListFragment : Fragment() {
                                                         getString(R.string.No_Connection)
                                                     root.pg_loading.setGone()
                                                     val feedback = Snackbar.make(
-                                                        activity!!.window.decorView,
+                                                        requireActivity().window.decorView,
                                                         "Failed to update data Pokemon",
                                                         Snackbar.LENGTH_LONG
                                                     )
+
+                                                    //reload fetch pokemon and types called from viewmodel
                                                     feedback.setAction("Try Again") {
-                                                        viewModel.loadRemotePokemons2()
-                                                        viewModel.loadRemoteTypesPokemon()
+                                                        loadRemotePokemons2()
+                                                        loadRemoteTypesPokemon()
                                                     }
                                                     feedback.show()
                                                 }
@@ -194,7 +198,7 @@ class MainPokeListFragment : Fragment() {
             }
             root = rootView.value!!
             job = Job()
-            adapter = MainRecyclerAdapter(activity!!)
+            adapter = MainRecyclerAdapter(requireActivity())
             (activity as AppCompatActivity).supportActionBar?.title = "MyPokedex"
             initAdapter()
             setHasOptionsMenu(true)
@@ -243,7 +247,7 @@ class MainPokeListFragment : Fragment() {
         root.rv_list_main.adapter = adapter
 
         val rowSpan = Utils.calculateNoOfColumn(
-            activity!!.applicationContext,
+            requireActivity().applicationContext,
             resources.getDimensionPixelSize(R.dimen.width_row) / resources.displayMetrics.scaledDensity
         )
         val layoutManager = GridLayoutManager(activity?.applicationContext, rowSpan)
@@ -254,11 +258,11 @@ class MainPokeListFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.main_menu, menu)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            val manager = activity!!.getSystemService(Context.SEARCH_SERVICE) as SearchManager
+            val manager = requireActivity().getSystemService(Context.SEARCH_SERVICE) as SearchManager
 
             val search: SearchView = menu.findItem(R.id.app_bar_search)?.actionView as SearchView
 
-            search.setSearchableInfo(manager.getSearchableInfo(activity!!.componentName))
+            search.setSearchableInfo(manager.getSearchableInfo(requireActivity().componentName))
 
             search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {

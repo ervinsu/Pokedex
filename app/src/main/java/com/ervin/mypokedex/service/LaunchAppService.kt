@@ -9,11 +9,10 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.ervin.mypokedex.App
 import com.ervin.mypokedex.R
+import com.ervin.mypokedex.data.PokemonRepository
 import com.ervin.mypokedex.data.local.entity.PokemonEntity
 import com.ervin.mypokedex.data.local.entity.PokemonTypeElementEntity
-import com.ervin.mypokedex.di.Injection
 import com.ervin.mypokedex.utils.ONGOING_CHANNEL_ID
 import com.ervin.mypokedex.utils.ON_LOADING_POKEMON
 import com.ervin.mypokedex.utils.cancelNotification
@@ -22,6 +21,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.produce
 import me.sargunvohra.lib.pokekotlin.client.PokeApiClient
+import org.koin.java.KoinJavaComponent.get
 
 
 class LaunchAppService : Service() {
@@ -29,8 +29,8 @@ class LaunchAppService : Service() {
     private val job = Job()
     private lateinit var manager: NotificationManager
     private var maxLimit: Int = 0
-    private val pokeRepo by lazy {
-       Injection.provideRepository(App())
+    private val pokeRepo:PokemonRepository by lazy {
+       get(PokemonRepository::class.java)
     }
     override fun onBind(p0: Intent?): IBinder? {
         return null
@@ -73,6 +73,7 @@ class LaunchAppService : Service() {
                     launch(CoroutineName("launcher-9")) { getQueueRemotePokemon(pokemonListChannel)  }
                     launch(CoroutineName("launcher-10")) { getQueueRemotePokemon(pokemonListChannel)  }
                 }
+                sendFeedbackToActivity(true)
             } catch (e: Exception) {
                 Log.d("exceptionFetchPokemon", e.message.toString())
                 sendFeedbackToActivity(false)
@@ -258,7 +259,7 @@ class LaunchAppService : Service() {
     private fun sendFeedbackToActivity(boolean: Boolean) {
         val intent = Intent(INTENT_FILTER_SERVICE_GET_POKEMON)
         intent.putExtra(RESULT_FETCHING_POKEMON, boolean)
-        LocalBroadcastManager.getInstance(App().getContext()).sendBroadcast(intent)
+        LocalBroadcastManager.getInstance(this@LaunchAppService).sendBroadcast(intent)
     }
 
     companion object {

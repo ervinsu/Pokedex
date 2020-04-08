@@ -1,5 +1,6 @@
 package com.ervin.mypokedex.data
 
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
@@ -7,7 +8,6 @@ import androidx.lifecycle.LiveData
 import androidx.paging.Config
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import com.ervin.mypokedex.App
 import com.ervin.mypokedex.data.local.LocalRepository
 import com.ervin.mypokedex.data.local.entity.PokemonEntity
 import com.ervin.mypokedex.data.local.entity.PokemonTypeElementEntity
@@ -29,7 +29,8 @@ import com.ervin.mypokedex.utils.isServiceRunning
 
 class PokemonRepository(
     private val remoteRepository: RemoteRepository,
-    private val localRepository: LocalRepository
+    private val localRepository: LocalRepository,
+    private val context: Context
 ) {
 
 
@@ -40,10 +41,11 @@ class PokemonRepository(
 
         fun getInstance(
             remoteRepository: RemoteRepository,
-            localRepository: LocalRepository
+            localRepository: LocalRepository,
+            context: Context
         ): PokemonRepository {
             return INSTANCE ?: synchronized(this) {
-                val instance = PokemonRepository(remoteRepository, localRepository)
+                val instance = PokemonRepository(remoteRepository, localRepository, context)
                 INSTANCE = instance
                 instance
             }
@@ -97,16 +99,15 @@ class PokemonRepository(
 
 
     suspend fun isPokemonAvailable(countRemotePokemon: Int) {
-        val countLocalPokemon = localRepository.getCountPokemon()
-        if (countLocalPokemon != countRemotePokemon && !isServiceRunning(LaunchAppService::class.java)) {
-            val intent = Intent(App().getContext(), LaunchAppService::class.java)
-            intent.putExtra("offset", countLocalPokemon)
+        if (getLocalCountPokemon() != countRemotePokemon && !isServiceRunning(LaunchAppService::class.java)) {
+            val intent = Intent(context, LaunchAppService::class.java)
+            intent.putExtra("offset", getLocalCountPokemon())
             intent.putExtra("limit", countRemotePokemon)
 //            intent.putExtra("limit", 15)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                App().getContext().startForegroundService(intent)
+                context.startForegroundService(intent)
             } else {
-                App().getContext().startService(intent)
+                context.startService(intent)
             }
         }
 //        } 
@@ -142,7 +143,7 @@ class PokemonRepository(
     }
 
 
-        suspend fun getLocalCountPokemon(): Int {
+    private suspend fun getLocalCountPokemon(): Int {
         return localRepository.getCountPokemon()
     }
 }

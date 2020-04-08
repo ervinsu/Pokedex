@@ -76,7 +76,7 @@ class QuizPokemonAnswerAdapter(private val context: Context, private val viewMod
 
             if(position == listAnswers.size-1){
                 if(viewModel.getTotalAnsweredQuestion().value == App().getTotalQuestion()){
-                    Toast.makeText(App().getContext(), "Question Complete!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, "Question Complete!", Toast.LENGTH_LONG).show()
                     return
                 }
                 val timer = object: CountDownTimer(3000, 1000){

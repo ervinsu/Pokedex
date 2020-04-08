@@ -11,13 +11,11 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ervin.mypokedex.R
 import com.ervin.mypokedex.service.LaunchAppService
 import com.ervin.mypokedex.utils.*
-import com.ervin.mypokedex.viewmodel.ViewModelFactory
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
@@ -25,7 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 //this activity is a template for creating a plain list of pokemon
@@ -44,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.title = "MyPokedex"
         initAdapter()
 
-        mainViewModel = obtainViewModel(this@MainActivity)
+        mainViewModel = obtainViewModel()
         try {
             mainViewModel.apply {
                 //get saved pokemon
@@ -209,8 +207,9 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun obtainViewModel(activity: MainActivity): MainViewModel {
-        val factory: ViewModelFactory = ViewModelFactory.getInstance(activity.application)
-        return ViewModelProvider(activity, factory).get(MainViewModel::class.java)
+    private fun obtainViewModel(): MainViewModel {
+//        val factory: ViewModelFactory = ViewModelFactory.getInstance(activity.application)
+//        return ViewModelProvider(activity, factory).get(MainViewModel::class.java)
+        return viewModel(MainViewModel::class).value
     }
 }
